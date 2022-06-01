@@ -30,6 +30,8 @@ function callback(response){
     i=0;
     while(i<response.length){
         var marker = L.marker([response[i].lat, response[i].lon], {icon: fireIcon}).addTo(map);
+        marker.bindPopup("Type feu : " + response[i].type+"<br> Intensité : " + response[i].intensity + "<br> Range : " + response[i].range);
+        marker.on('click', onClick);
         i++
     }
 
@@ -38,8 +40,6 @@ function callback(response){
 function err_callback(error){
     console.log(error);
 }
-
-generateFeux()
 
 //Generation des icones
 var Icon = L.Icon.extend({
@@ -52,3 +52,13 @@ var fireIcon = new Icon({iconUrl: 'IMAGES/fire.png'});
 L.icon = function (options) {
     return new L.Icon(options);
 };
+
+
+function onClick(e) {
+    var popup = e.target.getPopup();
+    var content = popup.getContent();
+ 
+    console.log(content);
+}
+
+generateFeux()

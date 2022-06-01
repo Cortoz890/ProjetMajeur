@@ -14,39 +14,48 @@
 
 <div id="filtres" name="filtres">
   <fieldset>
-    <legend>Choisissez les feux à ajouter :</legend>
+    <legend>Choisissez les Feux à ajouter :</legend>
 
     <div>
-      <input type="checkbox" id="A" name="A" onchange="affichageFeux('A')" checked>
+      <input type="checkbox" id="A" name="A" onchange="generateFeux()" checked>
       <label for="A">Feux Secs</label>
     </div>
 
     <div>
-      <input type="checkbox" id="B_Gasoline" name="Gasoline" onchange="affichageFeux('B_Gasoline')" checked>
+      <input type="checkbox" id="B_Gasoline" name="Gasoline" onchange="generateFeux()" checked>
       <label for="Gasoline">Feux d'Essences</label>
     </div>
     <div>
-        <input type="checkbox" id="B_Alcohol" name="Alcohol" onchange="affichageFeux('B_Alcohol')" checked>
+        <input type="checkbox" id="B_Alcohol" name="Alcohol" onchange="generateFeux()" checked>
         <label for="Alcohol">Feux d'Alcools</label>
     </div>
     <div>
-        <input type="checkbox" id="B_Plastics" name="Plastics" onchange="affichageFeux('B_Gasoline')" checked>
+        <input type="checkbox" id="B_Plastics" name="Plastics" onchange="generateFeux()" checked>
         <label for="Plastics">Feux de Plastiques</label>
     </div>
     <div>
-        <input type="checkbox" id="C_Flammable_Gases" name="Gases" onchange="affichageFeux('C_Flammable_Gases')"checked>
+        <input type="checkbox" id="C_Flammable_Gases" name="Gases" onchange="generateFeux()"checked>
         <label for="Gases">Feux de Gaz</label>
     </div>
     <div>
-        <input type="checkbox" id="D_Metals" name="Metals" onchange="affichageFeux('D_Metals')" checked>
+        <input type="checkbox" id="D_Metals" name="Metals" onchange="generateFeux()" checked>
         <label for="Metals">Feux de Métaux</label>
     </div>
 
     <div>
-        <input type="checkbox" id="E_Electric" name="Electric" onchange="affichageFeux('E_Electric')" checked>
+        <input type="checkbox" id="E_Electric" name="Electric" onchange="generateFeux()" checked>
         <label for="Electric">Feux Electriques</label>
       </div>
-        
+    
+      <div>
+        <input type="range" id="Intensity" name="Intensity" onchange="generateFeux()" min=0 max=100>
+        <label for="Intensity">Intensité</label>
+      </div>
+
+      <div>
+        <input type="range" id="Range" name="Range" onchange="generateFeux()" min=0 max=100>
+        <label for="Range">Etendue</label>
+      </div>
   </fieldset>
 </div>
 

@@ -10,26 +10,8 @@ L.tileLayer(
     }).addTo(map);
 
     
-generateFeux()
 
 
-
-function affichageFeux(type){
-    console.log(type)
-    if(document.getElementById(type).checked){
-        opacity=1;
-    }
-    else{
-        opacity=0;
-    }
-    i=0;
-    if(listes_marqueurs[type]!=null){
-        while(i<listes_marqueurs[type].length){
-            listes_marqueurs[type][i].setOpacity(opacity)
-            i++;
-        }
-    }
-}
 
 function generateFeux(){
 
@@ -46,22 +28,30 @@ function generateFeux(){
 }
 
 function callback(response){
-    listes_marqueurs={};
+    i=0;
+    console.log(listeMarqueur.length);
+    while(i < listeMarqueur.length){
+        map.removeLayer(listeMarqueur[i])
+        console.log("salut")
+        i++;
+    }
     i=0;
     while(i<response.length){
         var marker = L.marker([response[i].lat, response[i].lon], {icon: fireIcon}, {title: response[i].type}).addTo(map);
         marker.bindPopup("Type feu : " + response[i].type+"<br> Intensité : " + response[i].intensity + "<br> Range : " + response[i].range);
         marker.on('click', onClick);
-        if(listes_marqueurs[response[i].type]!=null){
-            listes_marqueurs[response[i].type].push(marker);
+        console.log(document.getElementById('Intensity').value)
+        if(document.getElementById(response[i].type).checked && response[i].intensity < document.getElementById("Intensity").value && response[i].range < document.getElementById("Range").value){
+            marker.setOpacity(1);
         }
         else{
-            listes_marqueurs[response[i].type]=[marker];
-        }
+            marker.setOpacity(0)
 
+        }
+        listeMarqueur.push(marker);
         i++;
     }
-    console.log(listes_marqueurs)
+    console.log(listeMarqueur);
 }
 
 function err_callback(error){
@@ -86,7 +76,6 @@ function generateCasernes(){
 }
 
 function callbackCaserne(response){
-    console.log(response);
     i=0;
     while(i<response.length){
         if(IdCasernes.includes(response[i].id)){
@@ -177,6 +166,7 @@ function onClick(e) {
 }
 
 //Appels des fonctions pour les requètes
+listeMarqueur=[];
 generateFeux()
 generateCasernes()
 generateVehicles()

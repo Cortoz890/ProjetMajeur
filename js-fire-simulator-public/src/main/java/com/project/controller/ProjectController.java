@@ -76,29 +76,24 @@ public class ProjectController {
   			return null;
 	}
   	
-  	@RequestMapping(value = { "/vehicle/{teamuuid}" }, method = RequestMethod.POST)
+  	@RequestMapping(value = { "/vehicule/{teamuuid}" }, method = RequestMethod.POST)
 		public StringBuffer addVehicule(@PathVariable String teamuuid) throws IOException {  
-  		
 			try {
-				System.out.println("uWu");
-  				URL url = new URL("http://vps.cpe-sn.fr:8081/vehicle/"+teamuuid);
-  				System.out.println("uWu");
+  				URL url = new URL("http://vps.cpe-sn.fr:8081/vehicule/"+teamuuid);
   				HttpURLConnection con = (HttpURLConnection) url.openConnection();
-  				System.out.println("uWu");
   				con.setRequestMethod("POST");
-  				/*
+  				
   				int status = con.getResponseCode();
-  				System.out.println("uWu");
+  				
   				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
   				String inputLine;
-  				System.out.println("uWu");
   				StringBuffer content = new StringBuffer();
   				while ((inputLine = in.readLine()) != null) {
   					content.append(inputLine);
   				}
   				in.close();
   				System.out.println(status);
-  				return content;*/
+  				return content;
   			} catch (MalformedURLException e) {
   				
   			}

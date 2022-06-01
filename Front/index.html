@@ -2,21 +2,56 @@
 <html>
 <head>
 <meta charset=utf-8 />
-<title>Add styles made with Mapbox Studio to a Leaflet map</title>
+<title>Map Pompiers</title>
 <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 <script src='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.js'></script>
 <link href='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.css' rel='stylesheet' />
-<style>
-  body { margin:0; padding:0; }
-  #map { position:absolute; top:0; bottom:0; width:100%; }
-</style>
+<link rel="stylesheet" href="style.css">
+
 </head>
 <body>
-
 <div id='map'></div>
 
-<script src="script.js"></script>
+<div id="filtres" name="filtres">
+  <fieldset>
+    <legend>Choisissez les feux à ajouter :</legend>
 
+    <div>
+      <input type="checkbox" id="A" name="A" onchange="affichageFeux('A')" checked>
+      <label for="A">Feux Secs</label>
+    </div>
+
+    <div>
+      <input type="checkbox" id="B_Gasoline" name="Gasoline" onchange="affichageFeux('B_Gasoline')" checked>
+      <label for="Gasoline">Feux d'Essences</label>
+    </div>
+    <div>
+        <input type="checkbox" id="B_Alcohol" name="Alcohol" onchange="affichageFeux('B_Alcohol')" checked>
+        <label for="Alcohol">Feux d'Alcools</label>
+    </div>
+    <div>
+        <input type="checkbox" id="B_Plastics" name="Plastics" onchange="affichageFeux('B_Gasoline')" checked>
+        <label for="Plastics">Feux de Plastiques</label>
+    </div>
+    <div>
+        <input type="checkbox" id="C_Flammable_Gases" name="Gases" onchange="affichageFeux('C_Flammable_Gases')"checked>
+        <label for="Gases">Feux de Gaz</label>
+    </div>
+    <div>
+        <input type="checkbox" id="D_Metals" name="Metals" onchange="affichageFeux('D_Metals')" checked>
+        <label for="Metals">Feux de Métaux</label>
+    </div>
+
+    <div>
+        <input type="checkbox" id="E_Electric" name="Electric" onchange="affichageFeux('E_Electric')" checked>
+        <label for="Electric">Feux Electriques</label>
+      </div>
+        
+  </fieldset>
+</div>
+
+
+<script src="script.js"></script>
 
 </body>
 </html>

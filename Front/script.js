@@ -9,7 +9,27 @@ L.tileLayer(
         attribution: '© <a href="https://www.mapbox.com/contribute/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
+    
+generateFeux()
 
+
+
+function affichageFeux(type){
+    console.log(type)
+    if(document.getElementById(type).checked){
+        opacity=1;
+    }
+    else{
+        opacity=0;
+    }
+    i=0;
+    if(listes_marqueurs[type]!=null){
+        while(i<listes_marqueurs[type].length){
+            listes_marqueurs[type][i].setOpacity(opacity)
+            i++;
+        }
+    }
+}
 
 function generateFeux(){
 
@@ -26,14 +46,22 @@ function generateFeux(){
 }
 
 function callback(response){
-    console.log(response)
+    listes_marqueurs={};
     i=0;
     while(i<response.length){
-        var marker = L.marker([response[i].lat, response[i].lon], {icon: fireIcon}).addTo(map);
+        var marker = L.marker([response[i].lat, response[i].lon], {icon: fireIcon}, {title: response[i].type}).addTo(map);
         marker.bindPopup("Type feu : " + response[i].type+"<br> Intensité : " + response[i].intensity + "<br> Range : " + response[i].range);
         marker.on('click', onClick);
-        i++
+        if(listes_marqueurs[response[i].type]!=null){
+            listes_marqueurs[response[i].type].push(marker);
+        }
+        else{
+            listes_marqueurs[response[i].type]=[marker];
+        }
+
+        i++;
     }
+    console.log(listes_marqueurs)
 }
 
 function err_callback(error){
@@ -60,4 +88,3 @@ function onClick(e) {
     console.log(content);
 }
 
-generateFeux()

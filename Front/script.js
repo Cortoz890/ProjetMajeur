@@ -74,14 +74,14 @@ function generateCasernes(){
                 .catch(error => err_callbackCaserne(error));
 
 }
-var idCamion;
+
 function callbackCaserne(response){
     i=0;
     while(i<response.length){
         if(IdCasernes.includes(response[i].id)){
             icone = stationIcon;
             //à modifier si plusieurs casernes
-            idCamion = response[i].vehicleIdSet
+            idCamion = [response[i].vehicleIdSet]
         }
         else{
             icone = stationOtherIcon;
@@ -127,7 +127,7 @@ function callbackVehicle(response){
             icone = vehicleOtherIcon;
         }
         var marker = L.marker([response[i].lat, response[i].lon], {icon: icone}).addTo(map);
-        marker.bindPopup("id" + response[i].id + "<br> Espace max : " + response[i].maxVehicleSpace +"<br> ID véhicules : " + response[i].vehicleIdSet + "<br> Capacité max : " + response[i].peopleCapacity + "<br> ID pompiers : " + response[i].peopleIdSet);
+        marker.bindPopup("id" + response[i].id + "<br> Type : " + response[i].type +"<br> Carburant : " + response[i].fuel + "<br> Liquide : " + response[i].liquidType + "<br> Quantité : " + response[i].liquidQuantity + "<br> membre : " + response[i].crewMember);
         marker.on('click', onClick);
         i++
     }

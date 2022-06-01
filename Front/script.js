@@ -1,4 +1,5 @@
 L.mapbox.accessToken = 'pk.eyJ1IjoibGpldGJhcHRpc3RlIiwiYSI6ImNsM3ZhYTNlMzBwM3Izam5wOGNycGoxdG0ifQ.NWzdwquyLVm5ZjHe3jrQbQ';
+var map = L.map('map').setView([45.75,4.83], 13);
 
 
 L.tileLayer(
@@ -8,7 +9,6 @@ L.tileLayer(
         attribution: '© <a href="https://www.mapbox.com/contribute/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
-var marker = L.marker([45.75, 4.83]).addTo(map);
 
 
 function generateFeux(){

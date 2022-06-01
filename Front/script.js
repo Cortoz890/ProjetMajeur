@@ -34,7 +34,6 @@ function callback(response){
         marker.on('click', onClick);
         i++
     }
-
 }
 
 function err_callback(error){

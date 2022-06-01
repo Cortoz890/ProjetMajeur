@@ -29,7 +29,7 @@ function callback(response){
     console.log(response)
     i=0;
     while(i<response.length){
-        var marker = L.marker([response[i].lat, response[i].lon]).addTo(map);
+        var marker = L.marker([response[i].lat, response[i].lon], {icon: fireIcon}).addTo(map);
         i++
     }
 
@@ -40,3 +40,15 @@ function err_callback(error){
 }
 
 generateFeux()
+
+//Generation des icones
+var Icon = L.Icon.extend({
+    options: {
+        iconSize:     [1.2*27.1, 1.2*29.6]
+    }
+});
+
+var fireIcon = new Icon({iconUrl: 'IMAGES/fire.png'});
+L.icon = function (options) {
+    return new L.Icon(options);
+};

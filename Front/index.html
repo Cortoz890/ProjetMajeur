@@ -14,7 +14,7 @@
 
 <div id="filtres" name="filtres">
   <fieldset>
-    <legend>Choisissez les Feux à ajouter :</legend>
+    <legend>Choisissez les Feux à afficher :</legend>
 
     <div>
       <input type="checkbox" id="A" name="A" onchange="generateFeux()" checked>
@@ -57,6 +57,52 @@
         <label for="Range">Etendue</label>
       </div>
   </fieldset>
+</div>
+
+<div id="camions" name="camions">
+  <fieldset>
+    <legend>Gestion des Camions : </legend>
+    <fieldset>
+      <legend>Création des Camions : </legend>
+        <form id="Creation_Camion" name="Creation_Camion">
+          <label for="crea_camion_type">Choisissez le type de camion : </label>
+
+          <select name="crea_camion_type" id="pcamion_type">
+              <option value="CAR">Voiture</option>
+              <option value="FIRE_ENGINE">VSAB</option>
+              <option value="PUMPER_TRUCK">Fourgon Pompe</option>
+              <option value="WATER_TENDER">Camion Citerne</option>
+              <option value="TURNTABLE_LADDER_TRUCK">Grande échelle</option>
+              <option value="TRUCK">Camion</option>
+          </select><br>
+
+          <label for="crea_camion_extincteur">Choisissez l'extincteur du camion : </label>
+
+          <select name="crea_camion_extincteur" id="camion_extincteur">
+              <option value="WATER">Eau</option>
+              <option value="MOUSSE">Mousse</option>
+              <option value="CO2">Dioxyde de Carbone</option>
+              <option value="POWDER">Poudre</option>
+          </select><br>
+
+          <label for="crea_camion_extincteur">Choisissez la caserne du camion : </label>
+
+          <select name="crea_camion_extincteur" id="pcamion_extincteur">
+              <option value="1">Caserne 1</option>
+          </select>
+
+          <input type="button" id="ajoutCamion" name="boutonAjout" value="Ajouter Camion">
+  </fieldset>
+  <fieldset>
+    <legend>Suppression des Camions : </legend>
+      <label for="del_camion_type">Choisissez le camion à supprimer : </label>
+
+      <select name="del_camion_type" id="camion_type">
+          <option value="1">Camion 1</option>
+      </select>
+
+  </fieldset>
+
 </div>
 
 

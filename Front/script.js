@@ -74,7 +74,7 @@ function generateCasernes(){
                 .catch(error => err_callbackCaserne(error));
 
 }
-
+var idCamion;
 function callbackCaserne(response){
     i=0;
     while(i<response.length){
@@ -101,7 +101,6 @@ function err_callbackCaserne(error){
 // Requête location Vehicule
 j = 0;
 var IdCasernes = [82];
-idCamion = [150];
 
 function generateVehicles(){
         const GET_URL="http://vps.cpe-sn.fr:8081/vehicle/";
@@ -128,7 +127,7 @@ function callbackVehicle(response){
             icone = vehicleOtherIcon;
         }
         var marker = L.marker([response[i].lat, response[i].lon], {icon: icone}).addTo(map);
-        marker.bindPopup(response[i].name + "<br> Espace max : " + response[i].maxVehicleSpace +"<br> ID véhicules : " + response[i].vehicleIdSet + "<br> Capacité max : " + response[i].peopleCapacity + "<br> ID pompiers : " + response[i].peopleIdSet);
+        marker.bindPopup("id" + response[i].id + "<br> Espace max : " + response[i].maxVehicleSpace +"<br> ID véhicules : " + response[i].vehicleIdSet + "<br> Capacité max : " + response[i].peopleCapacity + "<br> ID pompiers : " + response[i].peopleIdSet);
         marker.on('click', onClick);
         i++
     }

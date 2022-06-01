@@ -91,6 +91,8 @@ function callbackCaserne(response){
     while(i<response.length){
         if(IdCasernes.includes(response[i].id)){
             icone = stationIcon;
+            //à modifier si plusieurs casernes
+            idCamion = response[i].vehicleIdSet
         }
         else{
             icone = stationOtherIcon;
@@ -106,6 +108,47 @@ function err_callbackCaserne(error){
     console.log(error);
 }
 
+
+// Requête location Vehicule
+j = 0;
+var IdCasernes = [82];
+idCamion = [150];
+
+function generateVehicles(){
+        const GET_URL="http://vps.cpe-sn.fr:8081/vehicle/";
+        let context =   {
+                            method: 'GET'
+                        };
+            
+        fetch(GET_URL,context)
+            .then(response => response.json())
+                .then(response => callbackVehicle(response))
+                .catch(error => err_callbackVehicle(error));
+
+}
+
+function callbackVehicle(response){
+    console.log("la réponse du camion")
+    console.log(response);
+    i=0;
+    while(i<response.length){
+        if(idCamion.includes(response[i].id)){
+            icone = vehicleIcon;
+        }
+        else{
+            icone = vehicleOtherIcon;
+        }
+        var marker = L.marker([response[i].lat, response[i].lon], {icon: icone}).addTo(map);
+        marker.bindPopup(response[i].name + "<br> Espace max : " + response[i].maxVehicleSpace +"<br> ID véhicules : " + response[i].vehicleIdSet + "<br> Capacité max : " + response[i].peopleCapacity + "<br> ID pompiers : " + response[i].peopleIdSet);
+        marker.on('click', onClick);
+        i++
+    }
+}
+
+function err_callbackVehicle(error){
+    console.log(error);
+}
+
 //Generation des icones
 var Icon = L.Icon.extend({
     options: {
@@ -116,6 +159,10 @@ var Icon = L.Icon.extend({
 var fireIcon = new Icon({iconUrl: 'IMAGES/fire.png'});
 var stationIcon = new Icon({iconUrl: 'IMAGES/station.png'});
 var stationOtherIcon = new Icon({iconUrl: 'IMAGES/stationOther.png'});
+var vehicleIcon = new Icon({iconUrl: 'IMAGES/vehicle.png'});
+var vehicleOtherIcon = new Icon({iconUrl: 'IMAGES/vehicleOther.png'});
+
+
 
 L.icon = function (options) {
     return new L.Icon(options);
@@ -132,3 +179,4 @@ function onClick(e) {
 //Appels des fonctions pour les requètes
 generateFeux()
 generateCasernes()
+generateVehicles()

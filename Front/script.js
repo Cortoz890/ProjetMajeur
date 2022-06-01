@@ -29,7 +29,9 @@ function callback(response){
     console.log(response)
     i=0;
     while(i<response.length){
-        var marker = L.marker([response[i].lat, response[i].lon]).addTo(map);
+        var marker = L.marker([response[i].lat, response[i].lon],{title: "test"}).addTo(map);
+        marker.bindPopup("Type feu : " + response[i].type+"<br> Intensité : " + response[i].intensity + "<br> Range : " + response[i].range);
+        marker.on('click', onClick);
         i++
     }
 
@@ -37,6 +39,13 @@ function callback(response){
 
 function err_callback(error){
     console.log(error);
+}
+
+function onClick(e) {
+    var popup = e.target.getPopup();
+    var content = popup.getContent();
+ 
+    console.log(content);
 }
 
 generateFeux()

@@ -40,6 +40,44 @@ function err_callback(error){
     console.log(error);
 }
 
+// Requête location Caserne
+j = 0;
+var IdCasernes = [82];
+
+function generateCasernes(){
+        const GET_URL="http://vps.cpe-sn.fr:8081/facility/";
+        let context =   {
+                            method: 'GET'
+                        };
+            
+        fetch(GET_URL,context)
+            .then(response => response.json())
+                .then(response => callbackCaserne(response))
+                .catch(error => err_callbackCaserne(error));
+
+}
+
+function callbackCaserne(response){
+    console.log(response);
+    i=0;
+    while(i<response.length){
+        if(IdCasernes.includes(response[i].id)){
+            icone = stationIcon;
+        }
+        else{
+            icone = stationOtherIcon;
+        }
+        var marker = L.marker([response[i].lat, response[i].lon], {icon: icone}).addTo(map);
+        marker.bindPopup(response[i].name + "<br> Espace max : " + response[i].maxVehicleSpace +"<br> ID véhicules : " + response[i].vehicleIdSet + "<br> Capacité max : " + response[i].peopleCapacity + "<br> ID pompiers : " + response[i].peopleIdSet);
+        marker.on('click', onClick);
+        i++
+    }
+}
+
+function err_callbackCaserne(error){
+    console.log(error);
+}
+
 //Generation des icones
 var Icon = L.Icon.extend({
     options: {
@@ -48,6 +86,9 @@ var Icon = L.Icon.extend({
 });
 
 var fireIcon = new Icon({iconUrl: 'IMAGES/fire.png'});
+var stationIcon = new Icon({iconUrl: 'IMAGES/station.png'});
+var stationOtherIcon = new Icon({iconUrl: 'IMAGES/stationOther.png'});
+
 L.icon = function (options) {
     return new L.Icon(options);
 };
@@ -60,4 +101,6 @@ function onClick(e) {
     console.log(content);
 }
 
+//Appels des fonctions pour les requètes
 generateFeux()
+generateCasernes()

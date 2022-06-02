@@ -8,7 +8,7 @@ L.tileLayer(
         zoomOffset: -1,
         attribution: '© <a href="https://www.mapbox.com/contribute/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
-
+map.addControl(new mapboxgl.AttributionControl(), 'top-right');
     
 
 

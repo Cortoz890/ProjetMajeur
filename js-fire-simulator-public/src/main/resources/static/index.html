@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Map Pompiers</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.css' rel='stylesheet' />
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div id='map'></div>
+
+<div id="filtres" name="filtres">
+  <fieldset>
+    <legend>Choisissez les Feux à afficher :</legend>
+
+    <div>
+      <input type="checkbox" id="A" name="A" onchange="generateFeux()" checked>
+      <label for="A">Feux Secs</label>
+    </div>
+
+    <div>
+      <input type="checkbox" id="B_Gasoline" name="Gasoline" onchange="generateFeux()" checked>
+      <label for="Gasoline">Feux d'Essences</label>
+    </div>
+
+    <div>
+        <input type="checkbox" id="B_Alcohol" name="Alcohol" onchange="generateFeux()" checked>
+        <label for="Alcohol">Feux d'Alcools</label>
+    </div>
+    <div>
+        <input type="checkbox" id="B_Plastics" name="Plastics" onchange="generateFeux()" checked>
+        <label for="Plastics">Feux de Plastiques</label>
+    </div>
+    <div>
+        <input type="checkbox" id="C_Flammable_Gases" name="Gases" onchange="generateFeux()"checked>
+        <label for="Gases">Feux de Gaz</label>
+    </div>
+    <div>
+        <input type="checkbox" id="D_Metals" name="Metals" onchange="generateFeux()" checked>
+        <label for="Metals">Feux de Métaux</label>
+    </div>
+
+    <div>
+        <input type="checkbox" id="E_Electric" name="Electric" onchange="generateFeux()" checked>
+        <label for="Electric">Feux Electriques</label>
+      </div>
+    
+      <div>
+        <input type="range" id="Intensity" name="Intensity" onchange="generateFeux()" min=0 max=100 value=100>
+        <label for="Intensity">Intensité</label>
+      </div>
+
+      <div>
+        <input type="range" id="Range" name="Range" onchange="generateFeux()" min=0 max=100 value=100>
+        <label for="Range">Etendue</label>
+      </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Gestion des Camions : </legend>
+    <fieldset>
+      <legend>Création des Camions : </legend>
+
+
+        <form id="creation_camion" name="Creation_Camion">
+          <label for="crea_camion_type">Choisissez le type de camion : </label>
+
+          <select name="crea_camion_type" id="camion_type">
+              <option value="CAR">Voiture</option>
+              <option value="FIRE_ENGINE">VSAB</option>
+              <option value="PUMPER_TRUCK">Fourgon Pompe</option>
+              <option value="WATER_TENDER">Camion Citerne</option>
+              <option value="TURNTABLE_LADDER_TRUCK">Grande échelle</option>
+              <option value="TRUCK">Camion</option>
+          </select><br>
+
+          <label for="crea_camion_extincteur">Choisissez l'extincteur du camion : </label>
+
+          <select name="crea_camion_extincteur" id="camion_extincteur">
+              <option value="WATER">Eau</option>
+              <option value="MOUSSE">Mousse</option>
+              <option value="CO2">Dioxyde de Carbone</option>
+              <option value="POWDER">Poudre</option>
+          </select><br>
+
+          <label for="crea_camion_extincteur">Choisissez la caserne du camion : </label>
+
+          <select name="crea_camion_caserne" id="camion_caserne">
+              <option value="1">Caserne 1</option>
+          </select>
+
+          <input type="button" id="ajoutCamion" name="boutonAjout" value="Ajouter Camion" onclick="creerCamion()">
+  </fieldset>
+
+
+  <fieldset>
+    <legend>Suppression des Camions : </legend>
+      <label for="del_camion">Choisissez le camion à supprimer : </label>
+
+      <select name="del_camion" id="del_camion">
+          <option value="1">Camion 1</option>
+      </select>
+
+      <input type="button" id="del_button" value="Supprimer Camion" onclick="supprimerCamion()">
+
+  </fieldset>
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>

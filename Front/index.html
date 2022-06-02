@@ -64,10 +64,12 @@
     <legend>Gestion des Camions : </legend>
     <fieldset>
       <legend>Création des Camions : </legend>
-        <form id="Creation_Camion" name="Creation_Camion">
+
+
+        <form id="creation_camion" name="Creation_Camion">
           <label for="crea_camion_type">Choisissez le type de camion : </label>
 
-          <select name="crea_camion_type" id="pcamion_type">
+          <select name="crea_camion_type" id="camion_type">
               <option value="CAR">Voiture</option>
               <option value="FIRE_ENGINE">VSAB</option>
               <option value="PUMPER_TRUCK">Fourgon Pompe</option>
@@ -91,8 +93,10 @@
               <option value="1">Caserne 1</option>
           </select>
 
-          <input type="button" id="ajoutCamion" name="boutonAjout" value="Ajouter Camion">
+          <input type="button" id="ajoutCamion" name="boutonAjout" value="Ajouter Camion" onclick="creerCamion()">
   </fieldset>
+
+
   <fieldset>
     <legend>Suppression des Camions : </legend>
       <label for="del_camion">Choisissez le camion à supprimer : </label>
@@ -100,6 +104,8 @@
       <select name="del_camion" id="del_camion">
           <option value="1">Camion 1</option>
       </select>
+
+      <input type="button" id="del_button" value="Supprimer Camion" onclick="supprimerCamion()">
 
   </fieldset>
 

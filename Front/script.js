@@ -177,6 +177,54 @@ function updateCaserneList(){
     }
 }
 
+function supprimerCamion(){
+    if(confirm("Voulez vous supprimer le véhicule "+document.getElementById("del_camion").value+" ?")){
+        const DEL_URL="http://localhost:8080/camion/"+document.getElementById("del_camion").value;
+        let context =   {
+                            method: 'DEL'
+                        };
+            
+        fetch(DEL_URL,context)
+    }
+}
+
+function creerCamion(){
+
+    let form = document.getElementById("creation_camion");
+    let data = new FormData(form);
+
+    const value = Object.fromEntries(data.entries());
+
+    console.log({value});
+
+    sendCamion(value);
+
+
+}
+
+function sendCamion(data){
+
+    const POST_URL="http://localhost:8080/camion"; 
+    let context =   {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    };
+        
+    fetch(POST_URL,context)
+            .then(response => callbackCreationCamion(response))
+            .catch(error => err_callback(error));
+}
+
+function callbackCreationCamion(response){
+    console.log(response.value)
+    idCamion.push(response.value)
+}
+
+
 //Appels des fonctions pour les requètes
 listeMarqueur=[];
 idCamion=[];

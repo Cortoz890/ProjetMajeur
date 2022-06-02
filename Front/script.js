@@ -29,10 +29,8 @@ function generateFeux(){
 
 function callback(response){
     i=0;
-    console.log(listeMarqueur.length);
     while(i < listeMarqueur.length){
         map.removeLayer(listeMarqueur[i])
-        console.log("salut")
         i++;
     }
     i=0;
@@ -40,7 +38,6 @@ function callback(response){
         var marker = L.marker([response[i].lat, response[i].lon], {icon: fireIcon}, {title: response[i].type}).addTo(map);
         marker.bindPopup("Type feu : " + response[i].type+"<br> Intensité : " + response[i].intensity + "<br> Range : " + response[i].range);
         marker.on('click', onClick);
-        console.log(document.getElementById('Intensity').value)
         if(document.getElementById(response[i].type).checked && response[i].intensity < document.getElementById("Intensity").value && response[i].range < document.getElementById("Range").value){
             marker.setOpacity(1);
         }
@@ -51,7 +48,6 @@ function callback(response){
         listeMarqueur.push(marker);
         i++;
     }
-    console.log(listeMarqueur);
 }
 
 function err_callback(error){
@@ -81,7 +77,7 @@ function callbackCaserne(response){
         if(IdCasernes.includes(response[i].id)){
             icone = stationIcon;
             //à modifier si plusieurs casernes
-            idCamion = [response[i].vehicleIdSet]
+            idCamion = response[i].vehicleIdSet;
         }
         else{
             icone = stationOtherIcon;
@@ -91,6 +87,8 @@ function callbackCaserne(response){
         marker.on('click', onClick);
         i++
     }
+    console.log(idCamion)
+    generateVehicles();
 }
 
 function err_callbackCaserne(error){
@@ -117,9 +115,7 @@ function generateVehicles(){
 
 function callbackVehicle(response){
     console.log("la réponse du camion")
-    console.log(response);
     i=0;
-    //console.log(idCamion)
     while(i<response.length){
         if(idCamion.includes(response[i].id)){
             icone = vehicleIcon;
@@ -161,12 +157,10 @@ L.icon = function (options) {
 function onClick(e) {
     var popup = e.target.getPopup();
     var content = popup.getContent();
- 
-    console.log(content);
-}
+ }
 
 //Appels des fonctions pour les requètes
 listeMarqueur=[];
+idCamion=[];
 generateFeux()
 generateCasernes()
-generateVehicles()

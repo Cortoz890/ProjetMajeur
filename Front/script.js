@@ -114,6 +114,12 @@ function generateVehicles(){
 
 function callbackVehicle(response){
     i=0;
+    while(i<listeMarqueurVehicule.length){
+        map.removeLayer(listeMarqueurVehicule[i])
+        i++
+    }
+
+    i=0;
     while(i<response.length){
         if(idCamion.includes(response[i].id)){
             icone = vehicleIcon;
@@ -124,6 +130,13 @@ function callbackVehicle(response){
         var marker = L.marker([response[i].lat, response[i].lon], {icon: icone}).addTo(map);
         marker.bindPopup("id" + response[i].id + "<br> Type : " + response[i].type +"<br> Carburant : " + response[i].fuel + "<br> Liquide : " + response[i].liquidType + "<br> Quantité : " + response[i].liquidQuantity + "<br> membre : " + response[i].crewMember);
         marker.on('click', onClick);
+        if(document.getElementById(response[i].type).checked && document.getElementById(response[i].liquidType).checked && document.getElementById("fuel").value>=response[i].fuel && document.getElementById("liquidQuantity").value>=response[i].liquidQuantity){
+            marker.setOpacity(1);
+        }
+        else{
+            marker.setOpacity(0);
+        }
+        listeMarqueurVehicule.push(marker);
         i++
     }
     updateVehicleList();
@@ -226,6 +239,7 @@ function callbackCreationCamion(response){
 
 //Appels des fonctions pour les requètes
 listeMarqueur=[];
+listeMarqueurVehicule=[];
 idCamion=[];
 generateFeux();
 generateCasernes();

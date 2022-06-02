@@ -87,7 +87,7 @@ function callbackCaserne(response){
         marker.on('click', onClick);
         i++
     }
-    console.log(idCamion)
+    updateCaserneList();
     generateVehicles();
 }
 
@@ -114,7 +114,6 @@ function generateVehicles(){
 }
 
 function callbackVehicle(response){
-    console.log("la réponse du camion")
     i=0;
     while(i<response.length){
         if(idCamion.includes(response[i].id)){
@@ -128,6 +127,7 @@ function callbackVehicle(response){
         marker.on('click', onClick);
         i++
     }
+    updateVehicleList();
 }
 
 function err_callbackVehicle(error){
@@ -159,8 +159,26 @@ function onClick(e) {
     var content = popup.getContent();
  }
 
+function updateVehicleList(){
+    i=0;
+    document.getElementById("del_camion").innerHTML=""
+    while(i<idCamion.length){
+        document.getElementById("del_camion").innerHTML+="<option value="+idCamion[i]+">Camion "+idCamion[i]+"</option>";
+        i++;
+    }
+}
+
+function updateCaserneList(){
+    i=0;
+    document.getElementById("camion_caserne").innerHTML=""
+    while(i<IdCasernes.length){
+        document.getElementById("camion_caserne").innerHTML+="<option value="+IdCasernes[i]+">Caserne "+IdCasernes[i]+"</option>";
+        i++;
+    }
+}
+
 //Appels des fonctions pour les requètes
 listeMarqueur=[];
 idCamion=[];
-generateFeux()
-generateCasernes()
+generateFeux();
+generateCasernes();

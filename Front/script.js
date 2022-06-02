@@ -119,6 +119,7 @@ function callbackVehicle(response){
     console.log("la réponse du camion")
     console.log(response);
     i=0;
+    //console.log(idCamion)
     while(i<response.length){
         if(idCamion.includes(response[i].id)){
             icone = vehicleIcon;

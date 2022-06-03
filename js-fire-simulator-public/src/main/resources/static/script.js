@@ -1,3 +1,5 @@
+//const { response } = require("express");
+
 L.mapbox.accessToken = 'pk.eyJ1IjoibGpldGJhcHRpc3RlIiwiYSI6ImNsM3ZhYTNlMzBwM3Izam5wOGNycGoxdG0ifQ.NWzdwquyLVm5ZjHe3jrQbQ';
 var map = L.map('map').setView([45.75,4.83], 13);
 
@@ -96,8 +98,7 @@ function err_callbackCaserne(error){
 
 
 // Requête location Vehicule
-j = 0;
-var IdCasernes = [82];
+
 
 function generateVehicles(){
         const GET_URL="http://vps.cpe-sn.fr:8081/vehicle/";
@@ -153,6 +154,9 @@ L.icon = function (options) {
 };
 
 
+//Gestion des formulaires 
+
+URL_base = "http://localhost:3080"
 function onClick(e) {
     var popup = e.target.getPopup();
     var content = popup.getContent();
@@ -178,7 +182,7 @@ function updateCaserneList(){
 
 function supprimerCamion(){
     if(confirm("Voulez vous supprimer le véhicule "+document.getElementById("del_camion").value+" ?")){
-        const DEL_URL="http://localhost:8080/camion/"+document.getElementById("del_camion").value;
+        const DEL_URL= URL_base +"/camion/"+document.getElementById("del_camion").value;
         let context =   {
                             method: 'DEL'
                         };
@@ -187,23 +191,57 @@ function supprimerCamion(){
     }
 }
 
+
+function generateCasPos(idCaserne){
+    console.log("je rentre")
+    const GET_URL="http://vps.cpe-sn.fr:8081/facility/"+idCaserne;
+        let context =   {
+                            method: 'GET'
+                        };
+            
+        fetch(GET_URL,context)
+            .then(response => response.json())
+                .then(response => callbackCasPos(response))
+                .catch(error => err_callbackCasPos(error));
+}
+
+function err_callbackCasPos(error){
+    console.log(error);
+}
+
+function callbackCasPos(response){
+    console.log("callback");
+
+    lat =  response.lat;
+    lon =  response.lon;
+    
+    data = {
+        "crewMember": 2,
+        "facilityRefID": idCas,
+        "fuel": 100,
+        "id": 0,
+        "lat": lat,
+        "liquidQuantity": 100,
+        "liquidType": form2.querySelector('select[name="crea_camion_extincteur"]').value,
+        "lon": lon,
+        "type": form2.querySelector('select[name="crea_camion_type"]').value
+      }
+
+    console.log(data);
+    sendCamion(data);
+}
+
 function creerCamion(){
 
-    let form = document.getElementById("creation_camion");
-    let data = new FormData(form);
-
-    const value = Object.fromEntries(data.entries());
-
-    console.log({value});
-
-    sendCamion(value);
-
+    form2 = document.querySelector("#creation_camion");
+    idCas = form2.querySelector('select[name="crea_camion_caserne"]').value
+    generateCasPos(idCas)
 
 }
 
 function sendCamion(data){
 
-    const POST_URL="http://localhost:8080/camion"; 
+    const POST_URL=URL_base + "/addVehicle"; 
     let context =   {
                         method: 'POST',
                         headers: {

@@ -1,8 +1,8 @@
-package caserne.com.service;
+package com.project.service;
 
 import org.springframework.stereotype.Service;
 
 @Service
-public class CaserneService {
+public class ProjectService {
 
 }

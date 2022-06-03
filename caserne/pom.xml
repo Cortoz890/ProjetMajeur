@@ -3,8 +3,7 @@
   <groupId>com.project</groupId>
   <artifactId>caserne</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>Caserne</name>
-  <parent>
+  <name>Caserne</name><parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.1.7.RELEASE</version>

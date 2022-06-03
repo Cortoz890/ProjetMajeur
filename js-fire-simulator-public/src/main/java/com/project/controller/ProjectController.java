@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +35,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
+
+import com.fasterxml.jackson.databind.JsonNode;
 import com.project.model.dto.FireDto;
+import com.project.model.dto.VehicleDto;
 
 
 @RestController 
@@ -167,7 +171,21 @@ public class ProjectController {
   			return coordinates;
 			
 }
+	  	
+	  	@RequestMapping(value = { "/addVehicle" }, method = RequestMethod.POST)
+		public JSONObject addVehicule(@RequestBody JSONObject my_json) throws IOException {  
+	  		
+	  		HttpPost post = new HttpPost("http://vps.cpe-sn.fr:8081/vehicle/"+"7c1be29c-621b-4858-a972-ed0f4fe4a0d3");
 
+	        post.setEntity(new StringEntity(my_json.toString(),ContentType.APPLICATION_JSON));
+
+	        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+	             CloseableHttpResponse response = httpClient.execute(post)) {
+
+	            System.out.println(EntityUtils.toString(response.getEntity()));
+	        }
+	    	return my_json;
+		}
 
   	@RequestMapping(value = { "/moveVehicle/{teamuuid}/{id}" }, method = RequestMethod.GET)
 		public void updateVehicle(@PathVariable String teamuuid, @PathVariable int id) throws IOException, InterruptedException { 

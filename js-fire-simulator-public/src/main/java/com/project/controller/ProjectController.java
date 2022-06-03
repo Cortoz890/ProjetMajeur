@@ -255,7 +255,7 @@ public class ProjectController {
   		return coordinates;
   }
 
-	@RequestMapping(value="/getVehicle/{id}", method=RequestMethod.GET)
+	@RequestMapping(value="/moveBastard/{id}", method=RequestMethod.GET)
 	public void moveInLine(@PathVariable int id) throws IOException, InterruptedException {
 		double[] vehiculeCoordinates = getVehicle(id);
 		double[] fireCoordinates = getOneFire();

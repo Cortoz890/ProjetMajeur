@@ -218,4 +218,57 @@ public class ProjectController {
   		public void eteindre_feu() {
   		
   	}*/
+  	
+  	@RequestMapping(value="/getVehicle/{id}", method=RequestMethod.GET)
+  	public double[] getVehicle(@PathVariable int id) throws IOException, InterruptedException {
+  		double[] coordinates= new double[3];
+  		try {
+  				URL url = new URL("http://vps.cpe-sn.fr:8081/vehicle/"+id);
+  				HttpURLConnection con = (HttpURLConnection) url.openConnection();
+  				con.setRequestMethod("GET");
+  				
+  				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+  				System.out.println(in);
+  				String inputLine;
+  				StringBuffer content = new StringBuffer();
+  				while ((inputLine = in.readLine()) != null) {
+  					System.out.println(inputLine);
+  					content.append(inputLine);
+  					String[] words = inputLine.split(",");
+  					
+  					for(int i = 0; i < words.length; i++) {
+  						words[i] = words[i].split(":")[1];
+	  					//System.out.println(words[i]);
+  					}
+  					words[5] = words[5].substring(0,words[5].length()-1);
+  					
+  					coordinates[0] = Double.parseDouble(words[5]);
+  					coordinates[1] = Double.parseDouble(words[4]);
+  					coordinates[2] = Double.parseDouble(words[2]);
+  					  				}
+  				in.close();
+  				
+  			} 
+  		catch (MalformedURLException e) {
+  				
+  			}
+  		return coordinates;
+  }
+
+	@RequestMapping(value="/getVehicle/{id}", method=RequestMethod.GET)
+	public void moveInLine(@PathVariable int id) throws IOException, InterruptedException {
+		double[] vehiculeCoordinates = getVehicle(id);
+		double[] fireCoordinates = getOneFire();
+		
+		double x = vehiculeCoordinates[0] - fireCoordinates[0];
+		double y = vehiculeCoordinates[1] - fireCoordinates[1];
+		
+		double rapport = y/x;
+		
+		int distance = 10;
+		
+		double deplacement_x = distance/(rapport*Math.sqrt(2));
+		double deplacement_y = deplacement_x*rapport;
+	}
 }
+

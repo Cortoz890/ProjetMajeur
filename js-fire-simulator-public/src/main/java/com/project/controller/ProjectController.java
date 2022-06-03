@@ -195,7 +195,6 @@ public class ProjectController {
             System.out.println(EntityUtils.toString(response.getEntity()));
         }
         
-        Thread.sleep(2000);
         coordinates = getOneFire();
   		}
 }
@@ -254,9 +253,35 @@ public class ProjectController {
   			}
   		return coordinates;
   }
+  	
+  	
+  	public void updateVehicle(double teamuuid,int id,double lat,double lon) throws IOException, InterruptedException { 
+  		
+  		JSONObject json = new JSONObject();
+  		json.put("crewMember", 5);
+  		json.put("facilityRefID", 82);
+  		json.put("fuel", 100);
+  		json.put("id", id);
+  		json.put("lat", lat);
+  		json.put("liquidQuantity", 100);
+  		json.put("liquidType", "ALL");
+  		json.put("lon", lon);
+  		json.put("type", "CAR");
+  	
+  		HttpPost post = new HttpPost("http://vps.cpe-sn.fr:8081/vehicle/"+teamuuid);
 
-	@RequestMapping(value="/moveBastard/{id}", method=RequestMethod.GET)
-	public void moveInLine(@PathVariable int id) throws IOException, InterruptedException {
+        post.setEntity(new StringEntity(json.toString(),ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(post)) {
+
+            System.out.println(EntityUtils.toString(response.getEntity()));
+        }
+  	}
+        
+  	
+	@RequestMapping(value="/moveLine/{teamuuid}/{id}", method=RequestMethod.GET)
+	public void moveInLine(@PathVariable int id,@PathVariable int teamuuid) throws IOException, InterruptedException {
 		double[] vehiculeCoordinates = getVehicle(id);
 		double[] fireCoordinates = getOneFire();
 		
@@ -265,10 +290,22 @@ public class ProjectController {
 		
 		double rapport = y/x;
 		
-		int distance = 10;
+		double deplacement = 0.0001;
 		
-		double deplacement_x = distance/(rapport*Math.sqrt(2));
+		double deplacement_x = deplacement/(rapport*Math.sqrt(2));
 		double deplacement_y = deplacement_x*rapport;
+		
+		double distance = (vehiculeCoordinates[0]-fireCoordinates[0])*(vehiculeCoordinates[0]-fireCoordinates[0]) + (vehiculeCoordinates[0]-fireCoordinates[0]);
+		
+		while(distance>deplacement){
+			updateVehicle(teamuuid, id, vehiculeCoordinates[0]+deplacement_x, vehiculeCoordinates[1]+deplacement_y);
+			distance = (vehiculeCoordinates[0]-fireCoordinates[0])*(vehiculeCoordinates[0]-fireCoordinates[0]) + (vehiculeCoordinates[0]-fireCoordinates[0]);
+			x = vehiculeCoordinates[0] - fireCoordinates[0];
+			y = vehiculeCoordinates[1] - fireCoordinates[1];
+			
+			Thread.sleep(100);
+		}
+		
 	}
 }
 

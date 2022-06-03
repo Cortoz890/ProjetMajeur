@@ -35,7 +35,7 @@ function callback(response){
     i=0;
     while(i<response.length){
         var marker = L.marker([response[i].lat, response[i].lon], {icon: fireIcon}, {title: response[i].type}).addTo(map);
-        marker.bindPopup("Type feu : " + response[i].type+"<br> Intensité : " + response[i].intensity + "<br> Range : " + response[i].range);
+        marker.bindPopup("id : " +response[i].id + "<br> Position : [ " + response[i].lat + "," + response[i].lon + "] <br> Type feu : " + response[i].type+"<br> Intensité : " + response[i].intensity + "<br> Range : " + response[i].range);
         marker.on('click', onClick);
         if(document.getElementById(response[i].type).checked && response[i].intensity < document.getElementById("Intensity").value && response[i].range < document.getElementById("Range").value){
             marker.setOpacity(1);
@@ -82,7 +82,7 @@ function callbackCaserne(response){
             icone = stationOtherIcon;
         }
         var marker = L.marker([response[i].lat, response[i].lon], {icon: icone}).addTo(map);
-        marker.bindPopup(response[i].name + "<br> Espace max : " + response[i].maxVehicleSpace +"<br> ID véhicules : " + response[i].vehicleIdSet + "<br> Capacité max : " + response[i].peopleCapacity + "<br> ID pompiers : " + response[i].peopleIdSet);
+        marker.bindPopup(response[i].name + "<br> Position : [ " + response[i].lat + "," + response[i].lon + "] <br> Espace max : " + response[i].maxVehicleSpace +"<br> ID véhicules : " + response[i].vehicleIdSet + "<br> Capacité max : " + response[i].peopleCapacity + "<br> ID pompiers : " + response[i].peopleIdSet);
         marker.on('click', onClick);
         i++
     }
@@ -122,7 +122,7 @@ function callbackVehicle(response){
             icone = vehicleOtherIcon;
         }
         var marker = L.marker([response[i].lat, response[i].lon], {icon: icone}).addTo(map);
-        marker.bindPopup("id" + response[i].id + "<br> Type : " + response[i].type +"<br> Carburant : " + response[i].fuel + "<br> Liquide : " + response[i].liquidType + "<br> Quantité : " + response[i].liquidQuantity + "<br> membre : " + response[i].crewMember);
+        marker.bindPopup("id" + response[i].id + "<br> Position : [ " + response[i].lat + "," + response[i].lon + "] <br> Type : " + response[i].type +"<br> Carburant : " + response[i].fuel + "<br> Liquide : " + response[i].liquidType + "<br> Quantité : " + response[i].liquidQuantity + "<br> membre : " + response[i].crewMember);
         marker.on('click', onClick);
         i++
     }

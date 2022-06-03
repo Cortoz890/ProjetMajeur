@@ -255,7 +255,7 @@ public class ProjectController {
   }
   	
   	
-  	public void updateVehicle(double teamuuid,int id,double lat,double lon) throws IOException, InterruptedException { 
+  	public void updateVehicle(String teamuuid,int id,double lat,double lon) throws IOException, InterruptedException { 
   		
   		JSONObject json = new JSONObject();
   		json.put("crewMember", 5);
@@ -281,7 +281,7 @@ public class ProjectController {
         
   	
 	@RequestMapping(value="/moveLine/{teamuuid}/{id}", method=RequestMethod.GET)
-	public void moveInLine(@PathVariable int id,@PathVariable int teamuuid) throws IOException, InterruptedException {
+	public void moveInLine(@PathVariable int id,@PathVariable String teamuuid) throws IOException, InterruptedException {
 		double[] vehiculeCoordinates = getVehicle(id);
 		double[] fireCoordinates = getOneFire();
 		

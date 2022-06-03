@@ -82,7 +82,7 @@ function callbackCaserne(response){
             icone = stationOtherIcon;
         }
         var marker = L.marker([response[i].lat, response[i].lon], {icon: icone}).addTo(map);
-        marker.bindPopup(response[i].name + "<br> Position : [ " + response[i].lat + "," + response[i].lon + "] <br> Espace max : " + response[i].maxVehicleSpace +"<br> ID véhicules : " + response[i].vehicleIdSet + "<br> Capacité max : " + response[i].peopleCapacity + "<br> ID pompiers : " + response[i].peopleIdSet);
+        marker.bindPopup(response[i].name +"<br> idCaserne :" + response[i].id + "<br> Position : [ " + response[i].lat + "," + response[i].lon + "] <br> Espace max : " + response[i].maxVehicleSpace +"<br> ID véhicules : " + response[i].vehicleIdSet + "<br> Capacité max : " + response[i].peopleCapacity + "<br> ID pompiers : " + response[i].peopleIdSet);
         marker.on('click', onClick);
         i++
     }

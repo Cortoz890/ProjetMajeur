@@ -3,6 +3,7 @@ package com.project.controller;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 //import javax.print.DocFlavor.URL;
@@ -34,17 +35,22 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONObject;
+//import org.apache.tomcat.util.json.JSONParser;
+import org.apache.tomcat.util.json.ParseException;
+import org.json.simple.*;
+import org.json.simple.parser.JSONParser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.project.model.dto.FireDto;
 import com.project.model.dto.VehicleDto;
+import com.project.service.ProjectService;
 
+// token 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
 
 @RestController 
 public class ProjectController {
 	
-	
+	ProjectService project_service;
 	  
 //  	@RequestMapping(value = { "/", "/index" }, method = RequestMethod.GET)
 //  		public String index(Model model) {  
@@ -109,6 +115,50 @@ public class ProjectController {
   			return null;
 	}
   	
+  	@RequestMapping(value = { "/vehicle" }, method = RequestMethod.GET)
+		public JSONObject getAllVehicles() throws IOException, ParseException, org.json.simple.parser.ParseException {  
+  			try {
+  				URL url = new URL("http://vps.cpe-sn.fr:8081/vehicle/");
+  				BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+  				StringBuffer json = new StringBuffer();
+  				String line;
+
+  				while ((line = reader.readLine()) != null) {
+  				  json.append(line);
+  				}
+  				reader.close();
+  				
+  			    JSONParser parser = new JSONParser();  
+  			    JSONObject my_json = (JSONObject) parser.parse(json.toString());  
+
+  				return my_json;
+  				/*
+  				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+  				System.out.println(in);
+  				String inputLine;
+  				StringBuffer content = new StringBuffer();
+  				while ((inputLine = in.readLine()) != null) {
+  					
+  					content.append(inputLine);
+  					System.out.println(inputLine);
+  					String[] words = inputLine.split(",");
+  					
+  					for(int i = 0; i < words.length; i++) {
+  						words[i] = words[i].split(":")[1];
+	  					System.out.println(words[i]);
+  					}
+  					words[words.length-1] = words[words.length-1].substring(0,words[words.length-1].length()-1);
+  					System.out.println(words[words.length-1]);
+  				}
+  				in.close();
+  				
+  				return content;*/
+  			} catch (MalformedURLException e) {
+  				
+  			}
+  			return null;
+	}
+  	/*
   	@RequestMapping(value = { "/vehicule/{teamuuid}" }, method = RequestMethod.POST)
 		public StringBuffer addVehicule(@PathVariable String teamuuid) throws IOException {  
 			try {
@@ -132,7 +182,7 @@ public class ProjectController {
   			}
   			return null;
 	}
-  	
+  	*/
   	
 		public double[] getOneFire() throws IOException{  
   		//int fireId = 0;

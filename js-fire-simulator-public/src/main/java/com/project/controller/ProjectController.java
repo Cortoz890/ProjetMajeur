@@ -23,7 +23,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,6 +43,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.project.model.dto.FireDto;
 import com.project.model.dto.VehicleDto;
 import com.project.service.ProjectService;
+import org.json.simple.JSONObject;
+import com.project.model.dto.FireDto;
 
 // token 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
 
@@ -221,21 +222,7 @@ public class ProjectController {
   			return coordinates;
 			
 }
-	  	
-	  	@RequestMapping(value = { "/addVehicle" }, method = RequestMethod.POST)
-		public JSONObject addVehicule(@RequestBody JSONObject my_json) throws IOException {  
-	  		
-	  		HttpPost post = new HttpPost("http://vps.cpe-sn.fr:8081/vehicle/"+"7c1be29c-621b-4858-a972-ed0f4fe4a0d3");
 
-	        post.setEntity(new StringEntity(my_json.toString(),ContentType.APPLICATION_JSON));
-
-	        try (CloseableHttpClient httpClient = HttpClients.createDefault();
-	             CloseableHttpResponse response = httpClient.execute(post)) {
-
-	            System.out.println(EntityUtils.toString(response.getEntity()));
-	        }
-	    	return my_json;
-		}
 
   	@RequestMapping(value = { "/moveVehicle/{teamuuid}/{id}" }, method = RequestMethod.GET)
 		public void updateVehicle(@PathVariable String teamuuid, @PathVariable int id) throws IOException, InterruptedException { 
@@ -263,7 +250,6 @@ public class ProjectController {
             System.out.println(EntityUtils.toString(response.getEntity()));
         }
         
-        Thread.sleep(2000);
         coordinates = getOneFire();
   		}
 }
@@ -286,4 +272,95 @@ public class ProjectController {
   		public void eteindre_feu() {
   		
   	}*/
+  	
+  	@RequestMapping(value="/getVehicle/{id}", method=RequestMethod.GET)
+  	public double[] getVehicle(@PathVariable int id) throws IOException, InterruptedException {
+  		double[] coordinates= new double[3];
+  		try {
+  				URL url = new URL("http://vps.cpe-sn.fr:8081/vehicle/"+id);
+  				HttpURLConnection con = (HttpURLConnection) url.openConnection();
+  				con.setRequestMethod("GET");
+  				
+  				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+  				System.out.println(in);
+  				String inputLine;
+  				StringBuffer content = new StringBuffer();
+  				while ((inputLine = in.readLine()) != null) {
+  					System.out.println(inputLine);
+  					content.append(inputLine);
+  					String[] words = inputLine.split(",");
+  					
+  					for(int i = 0; i < words.length; i++) {
+  						words[i] = words[i].split(":")[1];
+	  					//System.out.println(words[i]);
+  					}
+  					words[5] = words[5].substring(0,words[5].length()-1);
+  					
+  					coordinates[0] = Double.parseDouble(words[5]);
+  					coordinates[1] = Double.parseDouble(words[4]);
+  					coordinates[2] = Double.parseDouble(words[2]);
+  					  				}
+  				in.close();
+  				
+  			} 
+  		catch (MalformedURLException e) {
+  				
+  			}
+  		return coordinates;
+  }
+  	
+  	
+  	public void updateVehicle(double teamuuid,int id,double lat,double lon) throws IOException, InterruptedException { 
+  		
+  		JSONObject json = new JSONObject();
+  		json.put("crewMember", 5);
+  		json.put("facilityRefID", 82);
+  		json.put("fuel", 100);
+  		json.put("id", id);
+  		json.put("lat", lat);
+  		json.put("liquidQuantity", 100);
+  		json.put("liquidType", "ALL");
+  		json.put("lon", lon);
+  		json.put("type", "CAR");
+  	
+  		HttpPost post = new HttpPost("http://vps.cpe-sn.fr:8081/vehicle/"+teamuuid);
+
+        post.setEntity(new StringEntity(json.toString(),ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(post)) {
+
+            System.out.println(EntityUtils.toString(response.getEntity()));
+        }
+  	}
+        
+  	
+	@RequestMapping(value="/moveLine/{teamuuid}/{id}", method=RequestMethod.GET)
+	public void moveInLine(@PathVariable int id,@PathVariable int teamuuid) throws IOException, InterruptedException {
+		double[] vehiculeCoordinates = getVehicle(id);
+		double[] fireCoordinates = getOneFire();
+		
+		double x = vehiculeCoordinates[0] - fireCoordinates[0];
+		double y = vehiculeCoordinates[1] - fireCoordinates[1];
+		
+		double rapport = y/x;
+		
+		double deplacement = 0.0001;
+		
+		double deplacement_x = deplacement/(rapport*Math.sqrt(2));
+		double deplacement_y = deplacement_x*rapport;
+		
+		double distance = (vehiculeCoordinates[0]-fireCoordinates[0])*(vehiculeCoordinates[0]-fireCoordinates[0]) + (vehiculeCoordinates[0]-fireCoordinates[0]);
+		
+		while(distance>deplacement){
+			updateVehicle(teamuuid, id, vehiculeCoordinates[0]+deplacement_x, vehiculeCoordinates[1]+deplacement_y);
+			distance = (vehiculeCoordinates[0]-fireCoordinates[0])*(vehiculeCoordinates[0]-fireCoordinates[0]) + (vehiculeCoordinates[0]-fireCoordinates[0]);
+			x = vehiculeCoordinates[0] - fireCoordinates[0];
+			y = vehiculeCoordinates[1] - fireCoordinates[1];
+			
+			Thread.sleep(100);
+		}
+		
+	}
 }
+

@@ -35,8 +35,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
+
+import com.project.model.dto.Coord;
 import com.project.model.dto.FireDto;
 import com.project.model.dto.VehicleDto;
+import com.project.tools.GisTools;
 
 
 @RestController 
@@ -207,23 +210,26 @@ public class ProjectController {
 
 		
 		
-		@RequestMapping(value = { "/moveVehicle/{teamuuid}" }, method = RequestMethod.GET)
+		@RequestMapping(value = { "/moveVehicle/{teamuuid}/{id}" }, method = RequestMethod.GET)
 		public double updateVehicle(@PathVariable String teamuuid, @PathVariable int id, @RequestBody VehicleDto vehicle) throws IOException, InterruptedException { 
-		  double[] coordinates = getAllFire();
+		  double[] coordinatesF = getAllFire();
+		  double[] coordinatesV = getVehicle(3266);
+		  double fireIntensity = getOneFire((int)coordinatesF[3]);
 		  
-		  double fireIntensity = getOneFire((int)coordinates[3]);
+		  GisTools convertisseur = new GisTools();
 		  
-		  coordinates = getAllFire();
-		JSONObject json = new JSONObject();
+		  double[] nextCoordinates = getNextCoordinate(coordinatesF[0], coordinatesF[1], coordinatesV[0], coordinatesV[1]);
+		  
+		  JSONObject json = new JSONObject();
 		  json.put("crewMember", vehicle.getCrewMember());
 		  json.put("facilityRefID", 82);
 		  json.put("fuel", vehicle.getFuel());
 		  json.put("id", id);
-		  json.put("lat", coordinates[0]);
+		  json.put("lat", nextCoordinates[0]);
 		  json.put("liquidQuantity", vehicle.getLiquidQuantity());
-		  json.put("liquidType", vehicle.getLiquidType());
-		  json.put("lon", coordinates[1]);
-		  json.put("type", vehicle.getType());
+		  json.put("liquidType", vehicle.getLiquidType().toString());
+		  json.put("lon", nextCoordinates[1]);
+		  json.put("type", vehicle.getType().toString());
 		  
 		  HttpPost post = new HttpPost("http://vps.cpe-sn.fr:8081/vehicle/"+teamuuid); 
 
@@ -237,44 +243,50 @@ public class ProjectController {
 		  
 		  
 		  while(true) {
-		  
-		  if(fireIntensity > 0) {  
-		  
-		  Thread.sleep(1000);
-		  System.out.println(fireIntensity+" "+coordinates[3]);
+		  Thread.sleep(2000);
+		  if(GisTools.computeDistance2(new Coord(coordinatesF[0],coordinatesF[1]), new Coord(coordinatesV[0],coordinatesV[1]))>5 && fireIntensity > 0) {
+			  System.out.println("avance");
+			  coordinatesF = getAllFire();
+			  coordinatesV = getVehicle(3266);
+			  fireIntensity = getOneFire((int)coordinatesF[3]);
+			  
+			  nextCoordinates = getNextCoordinate(coordinatesF[0], coordinatesF[1], coordinatesV[0], coordinatesV[1]);
+			  
+			  json = new JSONObject();
+			  json.put("crewMember", vehicle.getCrewMember());
+			  json.put("facilityRefID", 82);
+			  json.put("fuel", vehicle.getFuel());
+			  json.put("id", id);
+			  json.put("lat", nextCoordinates[0]);
+			  json.put("liquidQuantity", vehicle.getLiquidQuantity());
+			  json.put("liquidType", vehicle.getLiquidType());
+			  json.put("lon", nextCoordinates[1]);
+			  json.put("type", vehicle.getType());
+			  
+			  post = new HttpPost("http://vps.cpe-sn.fr:8081/vehicle/"+teamuuid); 
+	
+			        post.setEntity(new StringEntity(json.toString(),ContentType.APPLICATION_JSON)); 
+	
+			        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+			             CloseableHttpResponse response = httpClient.execute(post)) { 
+	
+			            //System.out.println(EntityUtils.toString(response.getEntity()));
+			        }
+			  fireIntensity = getOneFire((int)coordinatesF[3]);
 		  }
-		  
 		  else {
-		  Thread.sleep(5000);
-		  coordinates = getAllFire();
-		  JSONObject json2 = new JSONObject();
-		  json.put("crewMember", vehicle.getCrewMember());
-		    json.put("facilityRefID", 82);
-		    json.put("fuel", vehicle.getFuel());
-		    json.put("id", vehicle.getId());
-		    json.put("lat", coordinates[0]);
-		    json.put("liquidQuantity", vehicle.getLiquidQuantity());
-		    json.put("liquidType", vehicle.getLiquidType());
-		    json.put("lon", coordinates[1]);
-		    json.put("type", vehicle.getType());
-		    
-		    HttpPost post2 = new HttpPost("http://vps.cpe-sn.fr:8081/vehicle/"+teamuuid);
-
-		          post2.setEntity(new StringEntity(json2.toString(),ContentType.APPLICATION_JSON));
-
-		          try (CloseableHttpClient httpClient = HttpClients.createDefault();
-		               CloseableHttpResponse response = httpClient.execute(post2)) {
-
-		              //System.out.println(EntityUtils.toString(response.getEntity()));
-		          }
+			  System.out.println("eteint");
+			  if(fireIntensity>0) {
+				  Thread.sleep(1000);
+			  }
+			  
+			  else {
+				  coordinatesF = getAllFire();
+				  fireIntensity = getOneFire((int)coordinatesF[3]);
+			  }
 		  }
-		  fireIntensity = getOneFire((int)coordinates[3]);
-		  }
+	}
 }
-
-
-
-  	
   	@RequestMapping(value = { "/vehicle/{teamuuid}/{id}" }, method = RequestMethod.DELETE)
 		public String delVehicle(@PathVariable int teamuuid, @PathVariable int id) {  
   			int myTeamuuid = teamuuid;
@@ -294,9 +306,8 @@ public class ProjectController {
   		
   	}*/
   	
-  	@RequestMapping(value="/getVehicle/{id}", method=RequestMethod.GET)
-  	public double[] getVehicle(@PathVariable int id) throws IOException, InterruptedException {
-  		double[] coordinates= new double[3];
+  	public double[] getVehicle(int id) throws IOException, InterruptedException {
+  		double[] coordinates= new double[2];
   		try {
   				URL url = new URL("http://vps.cpe-sn.fr:8081/vehicle/"+id);
   				HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -317,9 +328,8 @@ public class ProjectController {
   					}
   					words[5] = words[5].substring(0,words[5].length()-1);
   					
-  					coordinates[0] = Double.parseDouble(words[5]);
-  					coordinates[1] = Double.parseDouble(words[4]);
-  					coordinates[2] = Double.parseDouble(words[2]);
+  					coordinates[0] = Double.parseDouble(words[1]);
+  					coordinates[1] = Double.parseDouble(words[2]);
   					  				}
   				in.close();
   				
@@ -331,58 +341,25 @@ public class ProjectController {
   }
   	
   	
-  	public void updateVehicle(String teamuuid,int id,double lat,double lon) throws IOException, InterruptedException { 
-  		
-  		JSONObject json = new JSONObject();
-  		json.put("crewMember", 5);
-  		json.put("facilityRefID", 82);
-  		json.put("fuel", 100);
-  		json.put("id", id);
-  		json.put("lat", lat);
-  		json.put("liquidQuantity", 100);
-  		json.put("liquidType", "ALL");
-  		json.put("lon", lon);
-  		json.put("type", "CAR");
   	
-  		HttpPost post = new HttpPost("http://vps.cpe-sn.fr:8081/vehicle/"+teamuuid);
-
-        post.setEntity(new StringEntity(json.toString(),ContentType.APPLICATION_JSON));
-
-        try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse response = httpClient.execute(post)) {
-
-            System.out.println(EntityUtils.toString(response.getEntity()));
-        }
-  	}
-        
-  	
-	@RequestMapping(value="/moveLine/{teamuuid}/{id}", method=RequestMethod.GET)
-	public void moveInLine(@PathVariable int id,@PathVariable String teamuuid) throws IOException, InterruptedException {
-		double[] vehiculeCoordinates = getVehicle(id);
-		
-		double[] fireCoordinates = getAllFire();
+	public double[] getNextCoordinate(double latV, double lonV, double latF, double lonF) throws IOException, InterruptedException {		
 		  
 		
-		double x = vehiculeCoordinates[0] - fireCoordinates[1];
-		double y = vehiculeCoordinates[1] - fireCoordinates[0];
+		double X = latV - latF;
+		double Y = lonV - lonF;
+				
+		double d = 0.0001;
+		double D = Math.sqrt((X*X)+(Y*Y));
 		
-		double rapport = y/x;
+		double deplacement_x = d*X/D;
+		double deplacement_y = d*Y/D;
 		
-		double deplacement = 0.0001;
 		
-		double deplacement_x = deplacement/(rapport*Math.sqrt(2));
-		double deplacement_y = deplacement_x*rapport;
-		
-		double distance = (vehiculeCoordinates[0]-fireCoordinates[0])*(vehiculeCoordinates[0]-fireCoordinates[0]) + (vehiculeCoordinates[0]-fireCoordinates[0]);
-		
-		while(distance>deplacement){
-			updateVehicle(teamuuid, id, vehiculeCoordinates[0]+deplacement_x, vehiculeCoordinates[1]+deplacement_y);
-			distance = (vehiculeCoordinates[0]-fireCoordinates[0])*(vehiculeCoordinates[0]-fireCoordinates[0]) + (vehiculeCoordinates[0]-fireCoordinates[0]);
-			x = vehiculeCoordinates[0] - fireCoordinates[0];
-			y = vehiculeCoordinates[1] - fireCoordinates[1];
-			
-			Thread.sleep(100);
-		}
+	
+		double[] result = new double[2];
+		result[0]=latV+deplacement_x;
+		result[1]=lonV+deplacement_y;
+		return result;
 		
 	}
 }

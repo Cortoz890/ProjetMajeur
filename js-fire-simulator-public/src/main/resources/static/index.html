@@ -96,18 +96,63 @@
           <input type="button" id="ajoutCamion" name="boutonAjout" value="Ajouter Camion" onclick="creerCamion()">
   </fieldset>
 
-
+</div>
+<div id = "filtre2">
   <fieldset>
-    <legend>Suppression des Camions : </legend>
-      <label for="del_camion">Choisissez le camion à supprimer : </label>
+    <legend>Gestion des Camions : </legend>
+    <fieldset>
+      <legend>Filtre des Camions : </legend>
+      <fieldset>
+        <legend >Types Camions</legend>
+        <div id="filtre_type_camion">
+          <input type="checkbox" id="CAR" name="CAR" onchange="generateVehicles()" checked>
+          <label for="CAR">Voiture</label><br>
 
-      <select name="del_camion" id="del_camion">
-          <option value="1">Camion 1</option>
-      </select>
+          <input type="checkbox" id="FIRE_ENGINE" name="FIRE_ENGINE" onchange="generateVehicles()" checked>
+          <label for="FIRE_ENGINE">Véhicule de Secours</label><br>
 
-      <input type="button" id="del_button" value="Supprimer Camion" onclick="supprimerCamion()">
+          <input type="checkbox" id="PUMPER_TRUCK" name="PUMPER_TRUCK" onchange="generateVehicles()" checked>
+          <label for="PUMPER_TRUCK">Fourgon Pompe</label><br>
 
-  </fieldset>
+          <input type="checkbox" id="WATER_TENDERS" name="WATER_TENDER" onchange="generateVehicles()" checked>
+          <label for="WATER_TENDER">Camion Citerne</label><br>
+
+          <input type="checkbox" id="TURNTABLE_LADDER_TRUCK" name="TURNTABLE_LADDER_TRUCK" onchange="generateVehicles()" checked>
+          <label for="TURNTABLE_LADDER_TRUCK">Grande Echelle</label><br>
+
+          <input type="checkbox" id="TRUCK" name="TRUCK" onchange="generateVehicles()" checked>
+          <label for="TRUCK">Camion</label>
+
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend >Extincteurs Camions</legend>
+        <div id="filtre_extincteur_camion">
+          <input type="checkbox" id="WATER" name="WATER" onchange="generateVehicles()" checked>
+          <label for="WATER">Eau</label><br>
+
+          <input type="checkbox" id="WATER_WITH_ADDITIVES" name="WATER_WITH_ADDITIVES" onchange="generateVehicles()" checked>
+          <label for="WATER_WITH_ADDITIVES">Eau avec Additifs</label><br>
+
+          <input type="checkbox" id="CARBON_DIOXIDE" name="CARBON_DIOXIDE" onchange="generateVehicles()" checked>
+          <label for="CARBON_DIOXIDE">Dioxyde de Carbone</label><br>
+
+          <input type="checkbox" id="POWDER" name="POWDER" onchange="generateVehicles()" checked>
+          <label for="POWDER">Poudre</label><br>
+
+          <input type="checkbox" id="ALL" name="ALL" onchange="generateVehicles()" checked>
+          <label for="ALL">Extincteur universel</label><br>
+        </div>
+
+        
+    </fieldset>
+          <label for="liquidQuantity">Quantité d'Extincteur : </label><br>
+          <input type="range" id="liquidQuantity" name="liquidQuantity" min=0 max=100 value=100 onchange="generateVehicles()"><br>
+
+          <label for="fuel">Carburant : </label><br>
+          <input type="range" id="fuel" name="fuel" min=0 max=100 value=100 onchange="generateVehicles()">
+    </fieldset>
+
 </div>
 
 

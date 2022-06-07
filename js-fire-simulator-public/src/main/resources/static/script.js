@@ -182,9 +182,9 @@ function updateCaserneList(){
 
 function supprimerCamion(){
     if(confirm("Voulez vous supprimer le véhicule "+document.getElementById("del_camion").value+" ?")){
-        const DEL_URL= URL_base +"/camion/"+document.getElementById("del_camion").value;
+        const DEL_URL= URL_base +"/deleteVehicle/"+document.getElementById("del_camion").value;
         let context =   {
-                            method: 'DEL'
+                            method: 'DELETE'
                         };
             
         fetch(DEL_URL,context)

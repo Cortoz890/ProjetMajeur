@@ -188,6 +188,7 @@ function supprimerCamion(){
                         };
             
         fetch(DEL_URL,context)
+        updateVehicleList()
     }
 }
 

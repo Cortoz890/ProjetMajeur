@@ -15,17 +15,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.project.model.dto.FireDto;
+import com.project.model.dto.LiquidType;
 import com.project.model.dto.VehicleDto;;
 
 @Service
 public class ProjectService {
 	
 	private VehicleDto[] vehicle_list;
+	private FireDto[] fire_list;
 	private ArrayList<VehicleDto> our_vehicle_list = new ArrayList<VehicleDto>();
 	public Dictionary<VehicleDto, Boolean> dico = new Hashtable<VehicleDto, Boolean>();
 
 	public ProjectService() {
 		vehicle_list = getVehicle_list();
+		fire_list = getFire_list();
 		our_vehicle_list = getOurVehicles();
 		setDico();
 	}
@@ -39,6 +43,13 @@ public class ProjectService {
 		ResponseEntity<VehicleDto[]> result = restTemplate.getForEntity("http://vps.cpe-sn.fr:8081/vehicle", VehicleDto[].class);
 		VehicleDto[] vehicles = result.getBody();
 		return vehicles;
+	}
+	
+	public FireDto[] getFire_list() {
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<FireDto[]> result = restTemplate.getForEntity("http://vps.cpe-sn.fr:8081/fire", FireDto[].class);
+		FireDto[] fires = result.getBody();
+		return fires;
 	}
 	
 	public ArrayList<VehicleDto> getOurVehicles() {
@@ -58,6 +69,19 @@ public class ProjectService {
 	
 	public void changeDico(VehicleDto my_vehicle, boolean state) {
 		dico.put(my_vehicle, !dico.get(my_vehicle));
+	}
+	
+	public VehicleDto getBestVehicleForFireType(FireDto my_fire) {
+		double best_eff = 0.0f;
+		VehicleDto best_vehicle = new VehicleDto();
+		for (VehicleDto my_vehicle : our_vehicle_list) {
+			double vehicle_eff = my_vehicle.getLiquidType().getEfficiency(my_fire.getType());
+			if (best_eff < vehicle_eff) {
+				best_eff = vehicle_eff;
+				best_vehicle = my_vehicle;
+			}
+		}
+		return best_vehicle;
 	}
 	
 }

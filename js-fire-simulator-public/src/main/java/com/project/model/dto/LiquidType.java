@@ -15,7 +15,7 @@ public enum LiquidType {
 	private Map<String,Float> fireEfficiencyMap;
 	
 	LiquidType(float a_Efficiency,float b_Efficiency,float c_Efficiency,float d_Efficiency,float e_Efficiency){
-		fireEfficiencyMap=new HashMap<String, Float>();
+		fireEfficiencyMap = new HashMap<String, Float>();
 		fireEfficiencyMap.put(FireType.A.toString(),a_Efficiency);
 		fireEfficiencyMap.put(FireType.B_Alcohol.toString(),b_Efficiency);
 		fireEfficiencyMap.put(FireType.B_Gasoline.toString(),b_Efficiency);
@@ -28,7 +28,6 @@ public enum LiquidType {
 	public float getEfficiency(String fireType) {
 		return fireEfficiencyMap.get(fireType);
 	}
-	
-	
+
 
 }

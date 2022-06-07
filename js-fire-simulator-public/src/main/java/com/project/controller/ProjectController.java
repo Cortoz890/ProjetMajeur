@@ -81,7 +81,8 @@ public class ProjectController {
 	}
   	
   	@RequestMapping(value = { "/facility/{id}" }, method = RequestMethod.GET)
-		public FacilityDto getFacilitybyId(@PathVariable String id) {  
+		public FacilityDto getFacilitybyId(@PathVariable String id) {
+  			//project_service.updateLists();
   			RestTemplate restTemplate = new RestTemplate();
 			ResponseEntity<FacilityDto> result = restTemplate.getForEntity("http://vps.cpe-sn.fr:8081/facility"+id, FacilityDto.class);
 			FacilityDto facilities = result.getBody();
@@ -90,18 +91,21 @@ public class ProjectController {
   	
   	@RequestMapping(value = { "/vehicle" }, method = RequestMethod.GET)
 		public ArrayList<VehicleDto> getAllVehicles() { 
+  			project_service.updateLists();
   			ArrayList<VehicleDto> vehicles = project_service.getOur_vehicle_list();
   			return vehicles;
 	}
   	
   	@RequestMapping(value = { "/fire" }, method = RequestMethod.GET)
 		public FireDto[] getAllFires() { 
+  			project_service.updateLists();
   			FireDto[] fires = project_service.getFire_list();
   			return fires;
 	}
   	
   	@RequestMapping(value = { "/vehicle/{id}" }, method = RequestMethod.GET)
 		public VehicleDto getVehiclesById(@PathVariable String id) {  
+  			project_service.updateLists();
   			RestTemplate restTemplate = new RestTemplate();
   			ResponseEntity<VehicleDto> result = restTemplate.getForEntity("http://vps.cpe-sn.fr:8081/vehicle/"+id, VehicleDto.class);
   			VehicleDto vehicles = result.getBody();
@@ -120,6 +124,7 @@ public class ProjectController {
 	    	return my_json;
 	}
   	
+  	/*
   	@RequestMapping(value = { "/deleteVehicle/{id}" }, method = RequestMethod.DELETE)
 		public void delVehicle(@PathVariable String id) throws IOException {  
   			HttpDelete delete = new HttpDelete("http://vps.cpe-sn.fr:8081/vehicle/"+"7c1be29c-621b-4858-a972-ed0f4fe4a0d3/"+id);
@@ -127,7 +132,7 @@ public class ProjectController {
   			CloseableHttpClient httpClient = HttpClients.createDefault();
   			CloseableHttpResponse response = httpClient.execute(delete);
 	}
-  	
+  	*/
   	
   	public double getOneFire(int fireId) throws IOException{ 
   		double fireIntensity = 0;

@@ -169,8 +169,8 @@ public class ProjectController {
 			  }
 			  words[5] = words[5].substring(0,words[5].length()-1);
 			  
-			  coordinates[0] = Double.parseDouble(words[5]);//lon
-			  coordinates[1] = Double.parseDouble(words[4]);//lat
+			  coordinates[0] = Double.parseDouble(words[4]);//lon
+			  coordinates[1] = Double.parseDouble(words[5]);//lat
 			  coordinates[2] = Double.parseDouble(words[2]);//intensity
 			  coordinates[3] = Double.parseDouble(words[0]);//id
 			  
@@ -189,23 +189,24 @@ public class ProjectController {
 		@RequestMapping(value = { "/moveVehicle/{teamuuid}/{id}" }, method = RequestMethod.GET)
 		public double updateVehicle(@PathVariable String teamuuid, @PathVariable int id, @RequestBody VehicleDto vehicle) throws IOException, InterruptedException { 
 		  double[] coordinatesF = getAllFire();
-		  double[] coordinatesV = getVehicle(3266);
+		  double[] coordinatesV = getVehicle(663614);
 		  double fireIntensity = getOneFire((int)coordinatesF[3]);
 		  
 		  GisTools convertisseur = new GisTools();
 		  
-		  double[] nextCoordinates = getNextCoordinate(coordinatesF[0], coordinatesF[1], coordinatesV[0], coordinatesV[1]);
+		  double[] nextCoordinates = getNextCoordinate(coordinatesV[0], coordinatesV[1], coordinatesF[0], coordinatesF[1]);
 		  
 		  JSONObject json = new JSONObject();
 		  json.put("crewMember", vehicle.getCrewMember());
-		  json.put("facilityRefID", 82);
+		  json.put("facilityRefID", 663497);
 		  json.put("fuel", vehicle.getFuel());
 		  json.put("id", id);
-		  json.put("lat", nextCoordinates[0]);
+		  json.put("lat", vehicle.getLat());
 		  json.put("liquidQuantity", vehicle.getLiquidQuantity());
 		  json.put("liquidType", vehicle.getLiquidType().toString());
-		  json.put("lon", nextCoordinates[1]);
+		  json.put("lon", vehicle.getLon());
 		  json.put("type", vehicle.getType().toString());
+		  System.out.println(json.toString());
 		  
 		  HttpPost post = new HttpPost("http://vps.cpe-sn.fr:8081/vehicle/"+teamuuid); 
 
@@ -214,30 +215,31 @@ public class ProjectController {
 		        try (CloseableHttpClient httpClient = HttpClients.createDefault();
 		             CloseableHttpResponse response = httpClient.execute(post)) { 
 
-		            //System.out.println(EntityUtils.toString(response.getEntity()));
+		            System.out.println(EntityUtils.toString(response.getEntity()));
 		        }
 		  
 		  
 		  while(true) {
-		  Thread.sleep(2000);
-		  if(GisTools.computeDistance2(new Coord(coordinatesF[0],coordinatesF[1]), new Coord(coordinatesV[0],coordinatesV[1]))>5 && fireIntensity > 0) {
+		  Thread.sleep(250);
+		  if(GisTools.computeDistance2(new Coord(coordinatesF[0],coordinatesF[1]), new Coord(coordinatesV[0],coordinatesV[1]))>25 && fireIntensity > 0) {
 			  System.out.println("avance");
-			  coordinatesF = getAllFire();
-			  coordinatesV = getVehicle(3266);
-			  fireIntensity = getOneFire((int)coordinatesF[3]);
+			  //coordinatesF = getAllFire();
+			  coordinatesV = getVehicle(id);
+			  //fireIntensity = getOneFire((int)coordinatesF[3]);
 			  
-			  nextCoordinates = getNextCoordinate(coordinatesF[0], coordinatesF[1], coordinatesV[0], coordinatesV[1]);
+			  nextCoordinates = getNextCoordinate(coordinatesV[0], coordinatesV[1], coordinatesF[0], coordinatesF[1]);
 			  
 			  json = new JSONObject();
 			  json.put("crewMember", vehicle.getCrewMember());
-			  json.put("facilityRefID", 82);
+			  json.put("facilityRefID", 663497);
 			  json.put("fuel", vehicle.getFuel());
 			  json.put("id", id);
-			  json.put("lat", nextCoordinates[0]);
+			  json.put("lat", nextCoordinates[1]);
 			  json.put("liquidQuantity", vehicle.getLiquidQuantity());
-			  json.put("liquidType", vehicle.getLiquidType());
-			  json.put("lon", nextCoordinates[1]);
-			  json.put("type", vehicle.getType());
+			  json.put("liquidType", vehicle.getLiquidType().toString());
+			  json.put("lon", nextCoordinates[0]);
+			  json.put("type", vehicle.getType().toString());
+			  System.out.println(json.toString());
 			  
 			  post = new HttpPost("http://vps.cpe-sn.fr:8081/vehicle/"+teamuuid); 
 	
@@ -246,17 +248,20 @@ public class ProjectController {
 			        try (CloseableHttpClient httpClient = HttpClients.createDefault();
 			             CloseableHttpResponse response = httpClient.execute(post)) { 
 	
-			            //System.out.println(EntityUtils.toString(response.getEntity()));
+			            System.out.println(EntityUtils.toString(response.getEntity()));
 			        }
 			  fireIntensity = getOneFire((int)coordinatesF[3]);
 		  }
 		  else {
+			  
 			  System.out.println("eteint");
 			  if(fireIntensity>0) {
 				  Thread.sleep(1000);
+				  fireIntensity = getOneFire((int)coordinatesF[3]);
 			  }
 			  
 			  else {
+				  System.out.println("Cherche Nouveau Feu");
 				  coordinatesF = getAllFire();
 				  fireIntensity = getOneFire((int)coordinatesF[3]);
 			  }
@@ -315,10 +320,10 @@ public class ProjectController {
 	public double[] getNextCoordinate(double latV, double lonV, double latF, double lonF) throws IOException, InterruptedException {		
 		  
 		
-		double X = latV - latF;
-		double Y = lonV - lonF;
+		double X = latF - latV;
+		double Y = lonF - lonV;
 				
-		double d = 0.0001;
+		double d = 0.0006;
 		double D = Math.sqrt((X*X)+(Y*Y));
 		
 		double deplacement_x = d*X/D;

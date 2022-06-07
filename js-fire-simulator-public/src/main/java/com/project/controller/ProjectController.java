@@ -19,13 +19,16 @@ import javax.net.ssl.HttpsURLConnection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -40,18 +43,20 @@ import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.project.model.dto.FacilityDto;
 import com.project.model.dto.FireDto;
 import com.project.model.dto.VehicleDto;
 import com.project.service.ProjectService;
 import org.json.simple.JSONObject;
 import com.project.model.dto.FireDto;
 
-// token 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
+// token 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
+// team uuid : 7c1be29c-621b-4858-a972-ed0f4fe4a0d3
 
 @RestController 
 public class ProjectController {
 	
-	ProjectService project_service;
+	ProjectService project_service = new ProjectService();
 	  
 //  	@RequestMapping(value = { "/", "/index" }, method = RequestMethod.GET)
 //  		public String index(Model model) {  
@@ -60,130 +65,47 @@ public class ProjectController {
 //  	}
 
   	@RequestMapping(value = { "/facility" }, method = RequestMethod.GET)
-		public StringBuffer getAllFacilities(Model model) throws IOException {  
-  		
-		try {
-			URL url = new URL("http://vps.cpe-sn.fr:8081/facility");
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			con.setRequestMethod("GET");
-			
-			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-			String inputLine;
-			StringBuffer content = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				content.append(inputLine);
-				
-
-			}
-			in.close();
-			return content;
-		} catch (MalformedURLException e) {
-			
-		}
-		return null;
+		public FacilityDto[] getAllFacilities(Model model) throws IOException {  
+  			RestTemplate restTemplate = new RestTemplate();
+			ResponseEntity<FacilityDto[]> result = restTemplate.getForEntity("http://vps.cpe-sn.fr:8081/facility", FacilityDto[].class);
+			FacilityDto[] facilities = result.getBody();
+			return facilities;
 	}
   	
   	@RequestMapping(value = { "/facility/{id}" }, method = RequestMethod.GET)
-		public StringBuffer getFacilitybyId(@PathVariable String id) throws IOException {  
-  			try {
-  				URL url = new URL("http://vps.cpe-sn.fr:8081/facility/"+id);
-  				HttpURLConnection con = (HttpURLConnection) url.openConnection();
-  				con.setRequestMethod("GET");
-  				
-  				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-  				System.out.println(in);
-  				String inputLine;
-  				StringBuffer content = new StringBuffer();
-  				while ((inputLine = in.readLine()) != null) {
-  					
-  					content.append(inputLine);
-  					//System.out.println(inputLine);
-  					String[] words = inputLine.split(",");
-  					
-  					for(int i = 0; i < words.length; i++) {
-  						words[i] = words[i].split(":")[1];
-	  					//System.out.println(words[i]);
-  					}
-  					words[words.length-1] = words[words.length-1].substring(0,words[words.length-1].length()-1);
-  					System.out.println(words[4]);
-  				}
-  				in.close();
-  				
-  				return content;
-  			} catch (MalformedURLException e) {
-  				
-  			}
-  			return null;
+		public FacilityDto getFacilitybyId(@PathVariable String id) {  
+  			RestTemplate restTemplate = new RestTemplate();
+			ResponseEntity<FacilityDto> result = restTemplate.getForEntity("http://vps.cpe-sn.fr:8081/facility"+id, FacilityDto.class);
+			FacilityDto facilities = result.getBody();
+			return facilities;
 	}
   	
   	@RequestMapping(value = { "/vehicle" }, method = RequestMethod.GET)
-		public JSONObject getAllVehicles() throws IOException, ParseException, org.json.simple.parser.ParseException {  
-  			try {
-  				URL url = new URL("http://vps.cpe-sn.fr:8081/vehicle/");
-  				BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-  				StringBuffer json = new StringBuffer();
-  				String line;
-
-  				while ((line = reader.readLine()) != null) {
-  				  json.append(line);
-  				}
-  				reader.close();
-  				
-  			    JSONParser parser = new JSONParser();  
-  			    JSONObject my_json = (JSONObject) parser.parse(json.toString());  
-
-  				return my_json;
-  				/*
-  				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-  				System.out.println(in);
-  				String inputLine;
-  				StringBuffer content = new StringBuffer();
-  				while ((inputLine = in.readLine()) != null) {
-  					
-  					content.append(inputLine);
-  					System.out.println(inputLine);
-  					String[] words = inputLine.split(",");
-  					
-  					for(int i = 0; i < words.length; i++) {
-  						words[i] = words[i].split(":")[1];
-	  					System.out.println(words[i]);
-  					}
-  					words[words.length-1] = words[words.length-1].substring(0,words[words.length-1].length()-1);
-  					System.out.println(words[words.length-1]);
-  				}
-  				in.close();
-  				
-  				return content;*/
-  			} catch (MalformedURLException e) {
-  				
-  			}
-  			return null;
+		public ArrayList<VehicleDto> getAllVehicles() { 
+  			ArrayList<VehicleDto> vehicles = project_service.getOur_vehicle_list();
+  			return vehicles;
 	}
-  	/*
-  	@RequestMapping(value = { "/vehicule/{teamuuid}" }, method = RequestMethod.POST)
-		public StringBuffer addVehicule(@PathVariable String teamuuid) throws IOException {  
-			try {
-  				URL url = new URL("http://vps.cpe-sn.fr:8081/vehicule/"+teamuuid);
-  				HttpURLConnection con = (HttpURLConnection) url.openConnection();
-  				con.setRequestMethod("POST");
-  				
-  				int status = con.getResponseCode();
-  				
-  				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-  				String inputLine;
-  				StringBuffer content = new StringBuffer();
-  				while ((inputLine = in.readLine()) != null) {
-  					content.append(inputLine);
-  				}
-  				in.close();
-  				System.out.println(status);
-  				return content;
-  			} catch (MalformedURLException e) {
-  				
-  			}
-  			return null;
+  	
+  	
+  	@RequestMapping(value = { "/vehicle/{id}" }, method = RequestMethod.GET)
+		public VehicleDto getVehiclesById(@PathVariable String id) {  
+  			RestTemplate restTemplate = new RestTemplate();
+  			ResponseEntity<VehicleDto> result = restTemplate.getForEntity("http://vps.cpe-sn.fr:8081/vehicle/"+id, VehicleDto.class);
+  			VehicleDto vehicles = result.getBody();
+  			return vehicles;
+  	}
+	
+  	@RequestMapping(value = { "/addVehicle" }, method = RequestMethod.POST)
+	public JSONObject addVehicule(@RequestBody JSONObject my_json) throws IOException {  
+  		HttpPost post = new HttpPost("http://vps.cpe-sn.fr:8081/vehicle/"+"7c1be29c-621b-4858-a972-ed0f4fe4a0d3");
+        post.setEntity(new StringEntity(my_json.toString(),ContentType.APPLICATION_JSON));
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(post))
+        {
+            System.out.println(EntityUtils.toString(response.getEntity()));
+        }
+    	return my_json;
 	}
-  	*/
   	
 		public double[] getOneFire() throws IOException{  
   		//int fireId = 0;
@@ -261,12 +183,6 @@ public class ProjectController {
 		return "";
 	}
 
-  	
-  	
-  	@RequestMapping(value = { "/gestion_vehicules" }, method = RequestMethod.GET)
-		public String gestion_vehicules(Model model) {  
-		return "gestion_vehicules";
-	}
   	
   	/*@RequestMapping(value = { "/eteindre"}, method = RequestMethod.GET)
   		public void eteindre_feu() {

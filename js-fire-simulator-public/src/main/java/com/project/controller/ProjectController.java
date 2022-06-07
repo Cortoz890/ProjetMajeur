@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -66,9 +67,13 @@ public class ProjectController {
 //  		return "index";
 // 
 //  	}
+  	@RequestMapping(value = { "/test" }, method = RequestMethod.GET)
+		public String test(Model model) {  
+  			return "abc";
+	}
 
   	@RequestMapping(value = { "/facility" }, method = RequestMethod.GET)
-		public FacilityDto[] getAllFacilities(Model model) throws IOException {  
+		public FacilityDto[] getAllFacilities(Model model) {  
   			RestTemplate restTemplate = new RestTemplate();
 			ResponseEntity<FacilityDto[]> result = restTemplate.getForEntity("http://vps.cpe-sn.fr:8081/facility", FacilityDto[].class);
 			FacilityDto[] facilities = result.getBody();
@@ -76,7 +81,8 @@ public class ProjectController {
 	}
   	
   	@RequestMapping(value = { "/facility/{id}" }, method = RequestMethod.GET)
-		public FacilityDto getFacilitybyId(@PathVariable String id) {  
+		public FacilityDto getFacilitybyId(@PathVariable String id) {
+  			//project_service.updateLists();
   			RestTemplate restTemplate = new RestTemplate();
 			ResponseEntity<FacilityDto> result = restTemplate.getForEntity("http://vps.cpe-sn.fr:8081/facility"+id, FacilityDto.class);
 			FacilityDto facilities = result.getBody();
@@ -85,13 +91,21 @@ public class ProjectController {
   	
   	@RequestMapping(value = { "/vehicle" }, method = RequestMethod.GET)
 		public ArrayList<VehicleDto> getAllVehicles() { 
+  			project_service.updateLists();
   			ArrayList<VehicleDto> vehicles = project_service.getOur_vehicle_list();
   			return vehicles;
 	}
   	
+  	@RequestMapping(value = { "/fire" }, method = RequestMethod.GET)
+		public FireDto[] getAllFires() { 
+  			project_service.updateLists();
+  			FireDto[] fires = project_service.getFire_list();
+  			return fires;
+	}
   	
   	@RequestMapping(value = { "/vehicle/{id}" }, method = RequestMethod.GET)
 		public VehicleDto getVehiclesById(@PathVariable String id) {  
+  			project_service.updateLists();
   			RestTemplate restTemplate = new RestTemplate();
   			ResponseEntity<VehicleDto> result = restTemplate.getForEntity("http://vps.cpe-sn.fr:8081/vehicle/"+id, VehicleDto.class);
   			VehicleDto vehicles = result.getBody();
@@ -99,17 +113,26 @@ public class ProjectController {
   	}
 	
   	@RequestMapping(value = { "/addVehicle" }, method = RequestMethod.POST)
-	public JSONObject addVehicule(@RequestBody JSONObject my_json) throws IOException {  
-  		HttpPost post = new HttpPost("http://vps.cpe-sn.fr:8081/vehicle/"+"7c1be29c-621b-4858-a972-ed0f4fe4a0d3");
-        post.setEntity(new StringEntity(my_json.toString(),ContentType.APPLICATION_JSON));
-        try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse response = httpClient.execute(post))
-        {
-            System.out.println(EntityUtils.toString(response.getEntity()));
-        }
-    	return my_json;
+		public JSONObject addVehicule(@RequestBody JSONObject my_json) throws IOException {  
+	  		HttpPost post = new HttpPost("http://vps.cpe-sn.fr:8081/vehicle/"+"7c1be29c-621b-4858-a972-ed0f4fe4a0d3");
+	        post.setEntity(new StringEntity(my_json.toString(),ContentType.APPLICATION_JSON));
+	        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+	             CloseableHttpResponse response = httpClient.execute(post))
+	        {
+	            System.out.println(EntityUtils.toString(response.getEntity()));
+	        }
+	    	return my_json;
 	}
   	
+  	/*
+  	@RequestMapping(value = { "/deleteVehicle/{id}" }, method = RequestMethod.DELETE)
+		public void delVehicle(@PathVariable String id) throws IOException {  
+  			HttpDelete delete = new HttpDelete("http://vps.cpe-sn.fr:8081/vehicle/"+"7c1be29c-621b-4858-a972-ed0f4fe4a0d3/"+id);
+  			//delete.setEntity(new StringEntity("",ContentType.APPLICATION_JSON));
+  			CloseableHttpClient httpClient = HttpClients.createDefault();
+  			CloseableHttpResponse response = httpClient.execute(delete);
+	}
+  	*/
   	
   	public double getOneFire(int fireId) throws IOException{ 
   		double fireIntensity = 0;
@@ -268,12 +291,6 @@ public class ProjectController {
 		  }
 	}
 }
-  	@RequestMapping(value = { "/vehicle/{teamuuid}/{id}" }, method = RequestMethod.DELETE)
-		public String delVehicle(@PathVariable int teamuuid, @PathVariable int id) {  
-  			int myTeamuuid = teamuuid;
-  			int vehicleId = id;
-		return "";
-	}
 
   	
   	/*@RequestMapping(value = { "/eteindre"}, method = RequestMethod.GET)

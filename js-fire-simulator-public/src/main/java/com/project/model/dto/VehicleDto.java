@@ -13,8 +13,8 @@ public class VehicleDto {
 	private Integer facilityRefID;
 	
 	public VehicleDto() {
-		crewMember= CREW_MEMBER_START_VALUE;
-		liquidType=LiquidType.ALL;
+		crewMember = CREW_MEMBER_START_VALUE;
+		liquidType = LiquidType.ALL;
 	}
 
 	public VehicleDto(int id,double lon, double lat, com.project.model.dto.VehicleType type,

@@ -57,7 +57,7 @@ function err_callback(error){
 
 // Requête location Caserne
 j = 0;
-var IdCasernes = [82];
+var IdCasernes = [663497];
 
 function generateCasernes(){
         const GET_URL="http://vps.cpe-sn.fr:8081/facility/";
@@ -115,6 +115,12 @@ function generateVehicles(){
 
 function callbackVehicle(response){
     i=0;
+    while(i<listeMarqueurVehicule.length){
+        map.removeLayer(listeMarqueurVehicule[i])
+        i++
+    }
+
+    i=0;
     while(i<response.length){
         if(idCamion.includes(response[i].id)){
             icone = vehicleIcon;
@@ -123,11 +129,18 @@ function callbackVehicle(response){
             icone = vehicleOtherIcon;
         }
         var marker = L.marker([response[i].lat, response[i].lon], {icon: icone}).addTo(map);
-        marker.bindPopup("id" + response[i].id + "<br> Position : [ " + response[i].lat + "," + response[i].lon + "] <br> Type : " + response[i].type +"<br> Carburant : " + response[i].fuel + "<br> Liquide : " + response[i].liquidType + "<br> Quantité : " + response[i].liquidQuantity + "<br> membre : " + response[i].crewMember);
+        marker.bindPopup("id" + response[i].id + "<br> Type : " + response[i].type +"<br> Carburant : " + response[i].fuel + "<br> Liquide : " + response[i].liquidType + "<br> Quantité : " + response[i].liquidQuantity + "<br> membre : " + response[i].crewMember);
         marker.on('click', onClick);
+        if(document.getElementById(response[i].type).checked && document.getElementById(response[i].liquidType).checked && document.getElementById("fuel").value>=response[i].fuel && document.getElementById("liquidQuantity").value>=response[i].liquidQuantity){
+            marker.setOpacity(1);
+        }
+        else{
+            marker.setOpacity(0);
+        }
+        listeMarqueurVehicule.push(marker);
         i++
     }
-    updateVehicleList();
+    //updateVehicleList();
 }
 
 function err_callbackVehicle(error){
@@ -162,14 +175,14 @@ function onClick(e) {
     var content = popup.getContent();
  }
 
-function updateVehicleList(){
+/*function updateVehicleList(){
     i=0;
     document.getElementById("del_camion").innerHTML=""
     while(i<idCamion.length){
         document.getElementById("del_camion").innerHTML+="<option value="+idCamion[i]+">Camion "+idCamion[i]+"</option>";
         i++;
     }
-}
+}*/
 
 function updateCaserneList(){
     i=0;
@@ -180,16 +193,6 @@ function updateCaserneList(){
     }
 }
 
-function supprimerCamion(){
-    if(confirm("Voulez vous supprimer le véhicule "+document.getElementById("del_camion").value+" ?")){
-        const DEL_URL= URL_base +"/camion/"+document.getElementById("del_camion").value;
-        let context =   {
-                            method: 'DEL'
-                        };
-            
-        fetch(DEL_URL,context)
-    }
-}
 
 
 function generateCasPos(idCaserne){
@@ -264,6 +267,7 @@ function callbackCreationCamion(response){
 
 //Appels des fonctions pour les requètes
 listeMarqueur=[];
+listeMarqueurVehicule=[];
 idCamion=[];
 generateFeux();
 generateCasernes();

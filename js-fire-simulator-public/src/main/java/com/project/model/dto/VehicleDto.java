@@ -11,6 +11,7 @@ public class VehicleDto {
 	private float fuel;		// total quantity of fuel
 	private int crewMember;
 	private Integer facilityRefID;
+	private boolean available;
 	
 	public VehicleDto() {
 		crewMember= CREW_MEMBER_START_VALUE;
@@ -105,6 +106,14 @@ public class VehicleDto {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public boolean isAvailable() {
+		return available;
+	}
+
+	public void setAvailable(boolean available) {
+		this.available = available;
 	}
 	
 

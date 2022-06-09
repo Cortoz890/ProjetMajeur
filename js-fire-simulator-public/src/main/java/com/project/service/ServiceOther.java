@@ -28,6 +28,7 @@ public class ServiceOther {
 	
 	public void updateLists() {
 		our_vehicle_list = service_vehicle.getOur_vehicle_list();
+		service_fire.updateFires();
 		our_fire_list = service_fire.getOur_fire_list();
 		setAvailabilityDico();
 	}
@@ -62,6 +63,7 @@ public class ServiceOther {
 	}
 	
 	public void assignFireToVehicle_basedOnDistance() {
+		updateLists();
 		for (VehicleDto my_vehicle : our_vehicle_list) {
 			if (availabilityDico.get(my_vehicle)) {
 				double latV = my_vehicle.getLat();
@@ -90,6 +92,7 @@ public class ServiceOther {
 			double my_eff = my_vehicle.getLiquidType().getEfficiency(my_fire.getType());
 			double my_distance = distanceBetween(my_vehicle, my_fire);
 			double my_quality = my_distance / my_eff;
+			// la formule pour my_quality peut être ajustée, mais ya moyen que ça soit déjà bon.
 			if ((best_quality > my_quality) & (availabilityDico.get(my_vehicle))) {
 				best_quality = my_quality;
 				best_vehicle = my_vehicle;
@@ -158,7 +161,7 @@ public class ServiceOther {
 		for (VehicleDto my_vehicle : our_vehicle_list) {
 			if ((my_vehicle.getFuel() < 0)) {
 				moveVehicleTo(my_vehicle, facility_lat, facility_lon);
-				assignmentDico.put(my_vehicle, facility_coord);
+				assignmentDico.replace(my_vehicle, facility_coord);
 			}
 		}
 	}
@@ -169,7 +172,7 @@ public class ServiceOther {
 		double my_distance = distanceBetween(vehicle_lat, vehicle_lon, facility_lat, facility_lon);
 		if ((my_distance + 1) > my_vehicle.getFuel()) { // La formule est à ajuster.
 			moveVehicleTo(my_vehicle, facility_lat, facility_lon);
-			assignmentDico.put(my_vehicle, facility_coord);
+			assignmentDico.replace(my_vehicle, facility_coord);
 		}
 	}
 	

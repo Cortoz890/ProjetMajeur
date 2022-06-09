@@ -35,6 +35,24 @@ public class ServiceFire {
 		our_fire_list = my_fire_list;
 	}
 	
+	public void updateFires(){	
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<FireDto[]> result = restTemplate.getForEntity("http://vps.cpe-sn.fr:8081/fire", FireDto[].class);
+		FireDto[] fires = result.getBody();
+		ArrayList<FireDto> my_fire_list = new ArrayList<FireDto>();
+		for (int i=0 ; i < fires.length ; i++) {
+			my_fire_list.add(fires[i]);
+			if (getFireByID(fires[i].getId(), our_fire_list) == null) {
+				our_fire_list.add(fires[i]);
+			}
+		}
+		for (int i=0 ; i < our_fire_list.size() ; i++) {
+			if (getFireByID(our_fire_list.get(i).getId(), my_fire_list) == null) {
+				our_fire_list.remove(our_fire_list.get(i));
+			}
+		}
+	}
+	
 	public void sort_fire_list() {
 		reset_fire_lists();
 		for (FireDto my_fire : our_fire_list) {
@@ -60,8 +78,8 @@ public class ServiceFire {
 		fire_list_E = new ArrayList<FireDto>();
 	}
 	
-	public FireDto getFireByID(int id) {
-		for (FireDto my_fire : our_fire_list) {
+	public FireDto getFireByID(int id, ArrayList<FireDto> my_list) {
+		for (FireDto my_fire : my_list) {
 			if (my_fire.getId() == id) {
 				return my_fire;
 			}

@@ -46,7 +46,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.project.model.dto.FacilityDto;
 import com.project.model.dto.FireDto;
 import com.project.model.dto.VehicleDto;
-import com.project.service.ProjectService;
+import com.project.service.ServiceFire;
+import com.project.service.ServiceVehicle;
 import org.json.simple.JSONObject;
 
 import com.project.model.dto.Coord;
@@ -60,8 +61,9 @@ import com.project.tools.GisTools;
 @RestController 
 public class ProjectController {
 	
-	ProjectService project_service = new ProjectService();
-	  
+	ServiceVehicle service_other = new ServiceVehicle();
+	ServiceFire service_fire = new ServiceFire();  
+	
 //  	@RequestMapping(value = { "/", "/index" }, method = RequestMethod.GET)
 //  		public String index(Model model) {  
 //  		return "index";
@@ -82,7 +84,7 @@ public class ProjectController {
   	
   	@RequestMapping(value = { "/facility/{id}" }, method = RequestMethod.GET)
 		public FacilityDto getFacilitybyId(@PathVariable String id) {
-  			//project_service.updateLists();
+  			//service_other.updateLists();
   			RestTemplate restTemplate = new RestTemplate();
 			ResponseEntity<FacilityDto> result = restTemplate.getForEntity("http://vps.cpe-sn.fr:8081/facility"+id, FacilityDto.class);
 			FacilityDto facilities = result.getBody();
@@ -91,21 +93,18 @@ public class ProjectController {
   	
   	@RequestMapping(value = { "/vehicle" }, method = RequestMethod.GET)
 		public ArrayList<VehicleDto> getAllVehicles() { 
-  			project_service.updateLists();
-  			ArrayList<VehicleDto> vehicles = project_service.getOur_vehicle_list();
+  			ArrayList<VehicleDto> vehicles = service_other.getOur_vehicle_list();
   			return vehicles;
 	}
   	
   	@RequestMapping(value = { "/fire" }, method = RequestMethod.GET)
-		public FireDto[] getAllFires() { 
-  			project_service.updateLists();
-  			FireDto[] fires = project_service.getFire_list();
+		public ArrayList<FireDto> getAllFires() { 
+  			ArrayList<FireDto> fires = service_fire.getOur_fire_list();
   			return fires;
 	}
   	
   	@RequestMapping(value = { "/vehicle/{id}" }, method = RequestMethod.GET)
 		public VehicleDto getVehiclesById(@PathVariable String id) {  
-  			project_service.updateLists();
   			RestTemplate restTemplate = new RestTemplate();
   			ResponseEntity<VehicleDto> result = restTemplate.getForEntity("http://vps.cpe-sn.fr:8081/vehicle/"+id, VehicleDto.class);
   			VehicleDto vehicles = result.getBody();

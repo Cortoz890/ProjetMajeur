@@ -8,7 +8,7 @@ public class Coord {
 	public final static String  DEFAULT_PROJECTION="4326";
 	public Coord() {
 	}
-	public Coord(double lon, double lat) {
+	public Coord(double lat, double lon) {
 		super();
 		this.lon = lon;
 		this.lat = lat;
